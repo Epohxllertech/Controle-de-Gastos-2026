@@ -1,0 +1,561 @@
+
+GROK resposta às solicitações de ajuda a partir de perguntas e imagens:
+
+...
+
+O erro que aparece na imagem é bem comum em desenvolvimento web, especialmente quando você tenta rodar uma aplicação diretamente do arquivo (abrindo o index.html pelo navegador).
+O que significa cada parte:
+
+Erro principal (postMessage):Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('file://') does not match the recipient window's origin ('null').Isso acontece porque o código está tentando se comunicar entre janelas/iframes (usando window.postMessage), mas o navegador bloqueia essa comunicação quando a página está rodando no protocolo file:// (ou seja, você abriu o arquivo diretamente).
+Segundo erro:This operation is not supported in the environment this application is running on. 'location.protocol' must be http, https or chrome-extension and web storage must be enabled.A aplicação está verificando o protocolo da página e percebeu que não é http, https nem chrome-extension. Muitas bibliotecas e frameworks (principalmente os modernos) não funcionam quando abertos direto do arquivo por questões de segurança.
+
+Causa mais comum:
+
+Você abriu o arquivo HTML direto no navegador (duplo clique ou arrastando para o Chrome/Firefox).
+A aplicação usa recursos que exigem um servidor web (Local Storage, Service Workers, postMessage entre origens, etc.).
+
+Como resolver:
+
+Melhor solução: Rode a aplicação com um servidor local:
+Se for React, Vite, Next.js, Angular, Vue, etc., use o comando de desenvolvimento:
+npm run dev ou yarn dev
+
+Se for um projeto simples (só HTML + JS):
+Use a extensão Live Server do VS Code (muito recomendado)
+Ou rode no terminal:Bashnpx serve
+# ou
+python -m http.server 8000
+
+
+Outras opções:
+Desative temporariamente as restrições de segurança do Chrome (não recomendado para uso normal):
+Feche o Chrome e abra com a flag:
+chrome.exe --allow-file-access-from-files
+
+
+Verifique se o projeto precisa de web storage (localStorage/sessionStorage) ativado — que geralmente só funciona em http/https.
+
+
+Resumo: O erro está dizendo que a aplicação não foi feita para rodar direto do arquivo (file://). Você precisa servir ela através de um servidor HTTP local.
+Se você me disser qual framework ou como você está rodando o projeto (React, Vite, Angular, HTML puro, etc.), posso te dar a solução exata.HTML puroEntendi! É um projeto HTML puro (apenas HTML, CSS e JavaScript).
+Por que está dando esse erro?
+Quando você abre o arquivo direto (duplo clique no index.html), o navegador usa o protocolo file://. Muitos recursos do JavaScript (como postMessage, localStorage, fetch, iframes, etc.) não funcionam por restrições de segurança do navegador.
+
+✅ Soluções (da mais fácil para a mais avançada):
+1. Melhor e mais fácil: Extensão Live Server (VS Code)
+Se você usa Visual Studio Code (recomendadíssimo):
+
+Instale a extensão Live Server (feita pelo Ritwick Dey).
+Abra a pasta do seu projeto no VS Code.
+Clique com o botão direito no arquivo index.html → Open with Live Server.
+Ele vai abrir automaticamente no navegador com endereço tipo: http://127.0.0.1:5500
+
+Pronto. O erro deve desaparecer.
+
+2. Usando Python (se você tem Python instalado)
+Abra o terminal na pasta do projeto e rode:
+Bash# Python 3
+python -m http.server 8000
+Depois acesse no navegador: http://localhost:8000
+
+3. Usando Node.js (npx)
+Se você tem Node.js instalado:
+Bashnpx serve
+Ou instale globalmente:
+Bashnpm install -g http-server
+http-server
+
+4. Solução temporária (não recomendada)
+Você pode abrir o Chrome com uma flag para permitir file://:
+
+Feche todos os janelas do Chrome.
+Pressione Win + R e cole:
+
+Bashchrome.exe --allow-file-access-from-files
+Depois abra seu index.html normalmente.
+Atenção: Isso reduz a segurança do navegador.
+
+Recomendação forte: Use a opção 1 (Live Server). É a mais prática para desenvolvimento de HTML puro.
+Quer que eu te explique passo a passo como instalar e usar o Live Server? Ou prefere outra solução?Subiu o app pelo LiveServer porém...:✅ Progresso! O Live Server resolveu o problema anterior (file://), mas agora apareceu um erro novo do Firebase.
+O que está acontecendo?
+O erro principal é este:
+The current domain is not authorized for OAuth operations.
+Add your domain (127.0.0.1) to the OAuth redirect domains list in the Firebase console.
+Isso é normal quando você está desenvolvendo localmente. O Firebase Auth (login com Google, Facebook, etc.) só aceita domínios que você autorizar previamente por segurança.
+
+Como resolver (passo a passo):
+
+Acesse o Firebase Console
+Selecione o seu projeto.
+No menu lateral, clique em Authentication (Autenticação).
+Na parte superior, clique na aba Settings (Configurações).
+Agora clique na aba Authorized domains (Domínios autorizados).
+Clique no botão Add domain.
+Digite exatamente:
+127.0.0.1
+E também adicione localhost (é bom adicionar os dois)
+
+Clique em Add (Adicionar).
+
+
+Depois de adicionar:
+
+Atualize a página do seu app (pressione Ctrl + R ou F5).
+Tente fazer login novamente.
+
+Normalmente isso resolve o problema.
+
+Outros avisos menores que apareceram:
+
+Permissions policy violation: unload → Geralmente é inofensivo, vem de alguma biblioteca. Pode ignorar por enquanto.
+O success que apareceu é do login que funcionou parcialmente.
+
+
+Quer que eu te explique como adicionar o domínio com prints ou vídeos na mente?
+Ou prefere que eu te ajude com outra coisa (ex: testar se o login está funcionando, configurar o Firebase, etc.)?
+Me diz o que aconteceu depois que você adicionar o 127.0.0.1 no Firebase.Consulte o seguinte conteúdo:Entendi o problema.
+Mesmo usando o Live Server, o erro voltou para o file://. Isso significa que você não está acessando a página através do servidor local, mas sim abrindo o arquivo diretamente novamente.
+Como confirmar e resolver:
+
+Verifique o endereço na barra do navegador
+Deve estar algo como:
+http://127.0.0.1:5500
+ou http://localhost:5500
+
+Se estiver escrito file:///... → Você abriu direto o arquivo.
+
+Como abrir corretamente com Live Server:
+No VS Code, com a pasta do projeto aberta:
+Clique com botão direito no arquivo index.html
+Escolha "Open with Live Server"
+
+Ou pressione a tecla Alt + L + Alt + O (atalho da extensão).
+Depois que abrir:
+Confirme que o endereço começou com http://
+Pressione Ctrl + Shift + R (recarregamento forçado) para limpar o cache.
+
+
+
+Se ainda assim não funcionar:
+Tente estas alternativas:
+Opção Rápida (Python):
+Abra o terminal dentro da pasta do projeto e rode:
+Bashpython -m http.server 8000
+Depois acesse: http://localhost:8000
+Opção com npx:
+Bashnpx serve
+
+Me confirma uma coisa importante:
+Qual é o endereço que aparece na barra de endereço do navegador agora?
+(tira um print ou copia e cola aqui)
+Além disso, depois que estiver rodando em http://, você provavelmente vai voltar ao erro anterior do Firebase (domain not authorized). Quando chegar lá, me avisa que te guio para adicionar o 127.0.0.1 no Firebase novamente.
+Pode mandar o print com o endereço atual que eu te oriento melhor.Consulte o seguinte conteúdo:✅ Agora está bem melhor!
+Você conseguiu rodar o app corretamente pelo Live Server. O endereço http://127.0.0.1:5500/index.html está correto.
+Análise do que aparece agora:
+
+✅ Bom:
+Está rodando em http:// (não mais file://)
+Apareceu "success" no console → Isso indica que o login (provavelmente com Firebase) foi executado com sucesso.
+
+⚠️ Aviso que ainda aparece:[Violation] Permissions policy violation: unload is not allowed in this document.Este erro é comum e geralmente inofensivo. Ele acontece porque alguma biblioteca (provavelmente Firebase ou outra) está tentando usar window.unload ou beforeunload, mas a política de permissões do navegador bloqueia.
+Não costuma quebrar o funcionamento da aplicação.
+
+
+O que fazer agora?
+Me responde estas perguntas para eu te ajudar melhor:
+
+O login está funcionando de verdade?
+Quando você clica em "Entrar" ou "Registrar", ele realmente faz o login e muda de tela / salva o usuário?
+Ou só aparece o "success" no console mas nada acontece na tela?
+
+Qual é o problema atual?
+O app parou em algum ponto?
+O cadastro/login não está salvando?
+Quer remover aquele aviso amarelo do console?
+
+Firebase Config
+Se o login ainda não estiver funcionando completamente, me manda o trecho do código onde você inicializa o Firebase (o firebase.initializeApp() ou initializeApp()), que eu verifico se está correto.
+
+
+Resumo atual:
+O problema principal (file://) foi resolvido. Agora estamos em um erro bem mais leve.
+Me fala exatamente o que ainda não está funcionando que eu te guio no próximo passo.Consulte o seguinte conteúdo:✅ Entendi o novo problema.
+Você conseguiu chegar na tela de Home ("Bem-vindo ao Controle de Gastos"), mas o CSS não está carregando.
+Erro principal:
+Refused to apply style from '.../global.css' because its MIME type ('text/html') is not a supported stylesheet
+Isso significa que o navegador está tentando carregar o arquivo global.css, mas o servidor está retornando uma página HTML (provavelmente erro 404) no lugar do CSS.
+
+Como resolver (passo a passo):
+
+Verifique o caminho do CSS no arquivo home.htmlAbra o arquivo pages/home/home.html e procure a linha que carrega o CSS. Deve estar algo parecido com:HTML<link rel="stylesheet" href="global.css">OuHTML<link rel="stylesheet" href="./global.css">
+Confira se o arquivo realmente existeVerifique se o arquivo global.css está dentro da pasta:textpages/
+└── home/
+    ├── home.html
+    └── global.css   ← Tem que estar aqui
+Solução mais comum: Ajuste o caminhoTente mudar o href para um caminho relativo correto:HTML<link rel="stylesheet" href="./global.css">Ou, se o global.css estiver na raiz do projeto:HTML<link rel="stylesheet" href="../../global.css">
+
+
+Outra forma rápida de testar:
+
+Clique com botão direito na página → Inspect → aba Network
+Recarregue a página (Ctrl + R)
+Procure por global.css na lista
+Veja qual é o Status (deve ser 200 OK). Se for 404, o arquivo não foi encontrado.
+
+
+Me manda por favor:
+
+O trecho do código HTML onde você inclui o <link rel="stylesheet"> (pode copiar e colar aqui).
+A estrutura de pastas (onde está o global.css exatamente?).
+
+Assim consigo te dar a correção exata do caminho.
+Enquanto isso, teste colocando o caminho como ./global.css e veja se resolve.Consulte o seguinte conteúdo:✅ Perfeito! Agora consigo ver o problema claramente.
+Diagnóstico:
+
+O arquivo global.css está na raiz do projeto.
+O home.html está dentro de pages/home/.
+Portanto, o caminho relativo está errado.
+
+O navegador está procurando o global.css dentro da pasta pages/home/ (ou em um caminho incorreto), por isso retorna uma página HTML (erro 404) ao invés do CSS.
+
+Solução:
+Abra o arquivo pages/home/home.html e procure a linha que carrega o CSS. Provavelmente está assim:
+HTML<link rel="stylesheet" href="global.css">
+Substitua por este caminho correto:
+HTML<link rel="stylesheet" href="../../global.css">
+
+Outras boas práticas (recomendo fazer):
+
+No home.html, certifique-se que os outros caminhos também estejam corretos (imagens, scripts, etc.).
+Exemplo de como deve ficar o <head> no home.html:
+
+HTML<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Gastos</title>
+    <link rel="stylesheet" href="../../global.css">
+    <!-- outros CSS ou scripts -->
+</head>
+
+Teste após a mudança:
+
+Salve o arquivo
+Recarregue a página com Ctrl + Shift + R (recarregamento forçado)
+
+
+Quer que eu te ajude a verificar também o register.html ou o index.html?
+Pode mandar o trecho do <head> do home.html aqui se ainda não funcionar que eu analiso.
+Manda o resultado depois da alteração!Consulte o seguinte conteúdo:✅ Ótimo! O CSS já está carregando corretamente agora.
+Você está na página de Registro (register.html). O erro anterior do global.css foi resolvido.
+Análise do Console atual:
+
+O aviso Permissions policy violation: unload continua aparecendo, mas é inofensivo na maioria dos casos (comum em apps com Firebase ou bibliotecas modernas).
+Os outros logs (Kaspersky, WebSocket, ProcessMessage) parecem vir de extensões do navegador (principalmente antivírus Kaspersky) ou do próprio Firebase. Não são erros do seu código.
+
+
+Próximos passos:
+Me diga qual é o problema atual para eu te ajudar:
+
+O layout está bom? (estilo, cores, responsividade)
+O formulário de registro está funcionando? (quando clica em Registrar, ele salva no Firebase?)
+Está dando algum erro novo no console? (pode expandir as mensagens vermelhas se tiver)
+Quer ajustar algo específico (ex: centralizar conteúdo, melhorar o visual, corrigir navegação, etc.)
+
+
+Dica importante:
+Como você tem várias páginas (index.html, register.html, home.html), é bom criar um menu de navegação ou links corretos entre elas. Se quiser, posso te ajudar a:
+
+Criar um sistema de navegação melhor
+Corrigir caminhos relativos em outras páginas
+Melhorar o visual geral
+
+Me fala o que você quer fazer agora?
+(Ex: “Quero fazer o registro funcionar”, “O visual está ruim”, “Tem erro no login”, etc.)
+
+
+ERRO DE ACESSO register.html
+
+Referente as mudanças feitas anteriormente, eu havia testado e deu certo a negação de entrada sem a senha correta, porém eu fechei o VSCODE e ao inserir novamente 
+uma senha inválida ele entrou, por gentileza revise o arquivo register.html, negando acesso a senhas inválidas conforme politcas OAUTH ( Firebas Authentication). 
+Obrigado.
+
+
+Gemini
+Responding with 3 Flash Preview
+Thinking
+Com certeza! É uma excelente observação. O que você está vivenciando é a persistência de sessão do Firebase. Por padrão, o Firebase mantém o usuário logado mesmo 
+que você feche o navegador ou o VS Code (armazenado no Local Storage). Se você já tinha logado com sucesso uma vez, ele "lembra" de você. Quando você tenta logar 
+com uma senha inválida, o Firebase recusa o novo login, mas a sessão antiga ainda está ativa no navegador, e ao navegar para register.html, o guardião de autenticação 
+vê que ainda existe um usuário logado.
+
+Para resolver isso e garantir que o acesso seja negado corretamente conforme as políticas do Firebase Auth, vamos ajustar o register.html e também fazer uma pequena 
+melhoria no seu index.js.
+
+1. Revisão do Arquivo register.html
+Vamos tornar a verificação de autenticação mais rigorosa. Se o objetivo desta página é ser uma área protegida (como parece pelo seu código atual), precisamos garantir 
+que ela só se torne visível se o Firebase confirmar um usuário ativo e tratar o estado de carregamento para evitar que o conteúdo apareça por um milissegundo antes do 
+redirecionamento.
+
+</head>
+<body style="display: none;"> <!-- Escondido por padrão -->
+    <h1 class="home">Bem-vindo ao Registro do Controle de Gastos</h1>
+    <div id="content" style="text-align: center;">
+        <p class="pBody03">Explore as funcionalidades do nosso sistema e comece a organizar suas finanças hoje mesmo!</p>
+        
+        <button type="button" class="classRecuperar" onclick="logout()">Sair</button>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+    <script>
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Observador de estado de autenticação
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                // Usuário autenticado com sucesso
+                document.body.style.display = "block"; // Só mostra se estiver logado
+            } else {
+                // Sem usuário ou senha inválida na sessão anterior, redireciona para o login
+                window.location.href = "../../index.html";
+            }
+        });
+
+        function logout() {
+            firebase.auth().signOut().then(() => {
+                window.location.href = "../../index.html";
+            });
+
+
+2. Ajuste Importante no index.js
+O motivo de você ter "entrado" mesmo com senha inválida provavelmente foi porque o botão Registrar estava habilitado. Se você clica nele sem estar logado, 
+e a página register.html tem um "guardião", ela deveria te expulsar. Se ela não expulsou, é porque você ainda estava logado da sessão anterior.
+
+Para garantir a segurança, altere a função login no seu index.js para garantir que qualquer sessão antiga seja encerrada antes de tentar um novo login, ou 
+simplesmente desabilite o redirecionamento manual se os campos não forem válidos.
+
+No seu index.js, notei que o botão registrar está sempre habilitado: form.registrarButton().disabled = false;
+
+Se a página de registro for uma área protegida, mude para:
+
+}
+
+function login() {
+    // Garante que tentamos um novo login do zero
+    firebase.auth().signInWithEmailAndPassword(form.email().value, form.password().value)
+    .then(() => {
+        // Sucesso: Senha correta, navega para a home
+        window.location.href = "pages/home/home.html";
+    }).catch(error => {
+        // Falha: Senha errada ou usuário não existe
+        alert("Senha ou e-mail inválidos.");
+        console.error('error', error);
+        // Aqui o Firebase garante que o 'user' atual não será alterado para o novo, 
+        // mas a sessão antiga pode persistir se você não deslogar.
+    });
+}
+    
+    
+    form.recuperarSenhaButton().disabled = !emailValid;
+    form.loginButton().disabled = !emailValid || !passwordValid;
+    // Se o registro for uma página pública para CRIAR conta, deixe false.
+    // Se for uma página interna, use: form.registrarButton().disabled = !emailValid || !passwordValid;
+}
+
+function isPasswordValid() {
+
+
+Por que isso acontece? (Dica de Especialista)
+Se você quiser que o sistema nunca lembre do usuário após fechar a aba (forçando o login toda vez), você pode adicionar esta linha logo após o firebase.initializeApp 
+no seu index.html:
+
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
+
+Isso impede que o Firebase guarde a senha no disco rígido do navegador, mantendo-a apenas na memória da aba atual.
+
+Resumo das melhorias:
+
+Proteção de Renderização: O body começa com display: none e só aparece no onAuthStateChanged.
+Fluxo de Redirecionamento: O redirecionamento no else garante que qualquer tentativa de acesso sem um token válido de OAuth/Firebase falhe instantaneamente.
+Gestão de Sessão: Verifique se você clicou em "Sair" (logout) antes de testar uma senha inválida, para garantir que o navegador limpou o usuário anterior.
+Espero que isso ajude a manter seu App de Gastos seguro!
+
+
+Flávio Viana
+Revise novamente e resolva o problema. Conforme as politicas Firebase OAUTH, não permita o acesso sem a senha correta!!!
+
+Gemini
+Responding with 3 Flash Preview
+Thinking
+O que você está enfrentando é um comportamento padrão do Firebase Authentication chamado Persistência de Estado. Por padrão, o Firebase armazena o token do usuário no 
+LocalStorage. Quando você fechou o VS Code e abriu novamente, a sessão anterior (que era válida) ainda estava gravada no seu navegador.
+
+Ao tentar logar com uma senha inválida, o Firebase simplesmente rejeitou a nova tentativa, mas não deletou a sessão antiga que já estava lá. Por isso, ao navegar para a 
+página de registro, o "guardião" (onAuthStateChanged) viu que ainda existia um usuário válido no sistema e permitiu o acesso.
+
+Para resolver isso e seguir rigorosamente as políticas de segurança, precisamos garantir duas coisas:
+
+Limpeza de Sessão: Se uma tentativa de login falhar, devemos desconectar qualquer usuário que porventura ainda esteja logado.
+Persistência de Sessão: Configurar o Firebase para que a sessão expire assim que o navegador (ou aba) for fechado.
+Aqui estão os ajustes necessários:
+
+1. Ajuste no Gatekeeper de Login
+No seu arquivo index.js, vamos atualizar a função login para usar a persistência de sessão e limpar estados antigos em caso de erro.
+
+
+}
+
+function login() {
+    // Define a persistência como SESSION (o login expira ao fechar a aba/navegador)
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+        .then(() => {
+            // Tenta o login com as credenciais fornecidas
+            return firebase.auth().signInWithEmailAndPassword(form.email().value, form.password().value);
+        })
+        .then(() => {
+            // Sucesso: Senha correta
+            window.location.href = "pages/home/home.html";
+        })
+        .catch(error => {
+            // CRÍTICO: Se a senha for inválida, forçamos o logout de qualquer sessão anterior
+            firebase.auth().signOut();
+            alert("Senha ou e-mail inválidos.");
+            console.error('Erro de autenticação:', error);
+        });
+}
+
+2. Revisão de Segurança no register.html
+O código do register.html já possui uma boa estrutura com o onAuthStateChanged, mas vamos garantir que ele seja o mais rigoroso possível. Se esta página é uma 
+área protegida (como um "Registro de Gastos" interno), o código abaixo garante que ninguém sem um token atual e válido 
+permaneça nela.
+
+</head>
+<body style="display: none;"> <!-- Escondido por padrão -->
+    <h1 class="home">Bem-vindo ao Registro do Controle de Gastos</h1>
+    <div id="content" style="text-align: center;">
+        <p class="pBody03">Explore as funcionalidades do nosso sistema e comece a organizar suas finanças hoje mesmo!</p>
+        
+        <button type="button" class="classRecuperar" onclick="logout()">Sair</button>
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Observador de estado de autenticação (OAuth Observer)
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                // Token válido encontrado
+                document.body.style.display = "block";
+            } else {
+                // Se o usuário não estiver autenticado (ou se o signOut() foi chamado no login)
+                // ele é expulso imediatamente para a tela de login.
+                window.location.href = "../../index.html";
+            }
+        });
+
+
+Por que isso resolve o seu problema?
+setPersistence(SESSION): Garante que, se você fechar o VS Code (o servidor do Live Server) ou o navegador, o Firebase não "lembrará" do usuário automaticamente no 
+próximo acesso ao disco.
+signOut() no catch: Esta é a chave para o seu teste. Quando você inseriu a senha errada, o código agora executa um comando de "limpeza geral". Mesmo que houvesse 
+uma sessão antiga "viva" no navegador, ela é destruída no momento em que uma nova tentativa de login falha.
+Dessa forma, ao clicar em "Registrar" logo após um erro de senha, o register.html verificará o estado, verá que não há ninguém logado (graças ao signOut) 
+e redirecionará você de volta para o login conforme esperado.
+
+Flávio Viana
+A function logout() { firebase.auth().signOut().then(() => { window.location.href = "../../index.html"; }); } , não está permitindo registrar. Revise por gentileza.
+
+Gemini
+Responding with 3 Flash Preview
+Thinking
+O problema que você está enfrentando ocorre devido a uma confusão entre dois tipos de páginas: a página de criação de conta (Cadastro/Sign Up) e uma 
+página protegida por senha.
+
+Se o arquivo register.html for a página onde um novo usuário cria sua conta, ela não pode ter o código de negação de acesso, pois, por definição, um novo usuário ainda 
+não tem login nem senha. Se o código de proteção estiver lá, ele sempre expulsará o usuário de volta para o index.html.
+
+Além disso, para resolver o erro de "entrar com senha inválida" devido à sessão antiga persistente, precisamos garantir que o Firebase limpe qualquer rastro de login 
+anterior assim que uma tentativa falhar.
+
+Aqui estão as correções para os dois arquivos:
+
+1. Ajuste no index.js
+Vamos tornar a função login mais rigorosa. Agora ela limpa qualquer sessão antiga antes de tentar o novo login e garante que, em caso de erro, o usuário seja deslogado 
+imediatamente.
+
+}
+
+function login() {
+    // Primeiro, forçamos o logout de qualquer "sessão fantasma" que tenha restado no navegador
+    firebase.auth().signOut().then(() => {
+        // Define a persistência como SESSION
+        return firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
+    }).then(() => {
+        // Tenta o login com as novas credenciais
+        return firebase.auth().signInWithEmailAndPassword(form.email().value, form.password().value);
+    }).then(() => {
+        // Sucesso total: Senha correta e nova sessão criada
+        window.location.href = "pages/home/home.html";
+    }).catch(error => {
+        // Falha: Senha errada. O signOut anterior já garantiu que o acesso será negado.
+        alert("Senha ou e-mail inválidos.");
+        console.error('Erro de autenticação:', error);
+    });
+}
+
+function register() {
+    window.location.href = "pages/register/register.html";
+}
+
+
+2. Ajuste no register.html
+Para que você consiga acessar esta página para "Registrar" (criar uma conta), precisamos remover o redirecionamento automático que te expulsa se você não estiver logado.
+
+Nota: Se esta página for para um usuário já logado registrar gastos, mantenha o código anterior. Mas como o botão se chama "Registrar", o padrão é que ela seja pública.
+
+    <title>REGISTRO DO CONTROLE DE GASTOS</title>
+    <link rel="stylesheet" href="../../global.css">
+</head>
+<body> 
+    <h1 class="home">Bem-vindo ao Registro do Controle de Gastos</h1>
+    <div id="content" style="text-align: center;">
+        <p class="pBody03">Explore as funcionalidades do nosso sistema e comece a organizar suas finanças hoje mesmo!</p>
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Removido o redirecionamento automático para permitir que novos usuários 
+        // acessem esta página e criem suas contas.
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                console.log("Usuário logado acessando registro:", user.email);
+            }
+        });
+
+        function logout() {
+
+ Por que isso resolve o problema?
+Segurança contra senhas inválidas: Ao adicionar firebase.auth().signOut() no início da função login, garantimos que o "usuário antigo" (que ficou salvo quando 
+você fechou o VS Code) seja apagado antes mesmo de testarmos a senha nova. Se a senha nova estiver errada, não sobrará nenhum usuário logado no sistema.
+Permissão para Registrar: Ao remover o else { window.location.href = ... } do arquivo register.html, o navegador não te jogará de volta para o login quando 
+você tentar entrar na página de cadastro.
+Persistência OAuth: O uso de Persistence.SESSION garante que, ao fechar a aba, o Firebase esqueça o login, exigindo a senha novamente na próxima vez (padrão de 
+segurança bancária).
+Tente realizar o teste agora: logue uma vez com sucesso, feche tudo, abra e tente logar com a senha errada. O sistema deverá barrar o acesso corretamente!
+
+Generated by Gemini 3 Flash Preview
+
+Flávio Viana
+Obrigado.
+
+
+Gemini
+Acknowledging Appreciation
+Gemini 2.5 generated this response due to high traffic on Gemini 3
+
+De nada! Fico feliz em ajudar.
+
+Se tiver mais alguma dúvida, precisar de ajustes adicionais no código, ou quiser explorar novas funcionalidades, é só me dizer. Estou aqui para auxiliar no 
+que for preciso!           
+
+
+

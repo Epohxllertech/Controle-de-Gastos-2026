@@ -1,0 +1,121 @@
+body {
+    margin: 0;
+}
+
+.centralize{
+    display: flex;
+
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+    height: 100vh; /* Define a altura do body para ocupar toda a altura da janela de visualização */
+    width: 1535px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.loading {
+    background: rgba(0, 16, 0, 0.51);
+    position: fixed;
+
+}
+
+.loading label{
+    font-family: Arial, sans-serif;
+    font-size: 30px;
+    text-align:center;
+    margin-top: 50px;
+    color: #022503;
+}
+
+button:active{
+    opacity: 0.9; /* Efeito de clique - botão fica um pouco transparente quando clicado */
+    color: #000000; /* Muda a cor do texto */
+}
+
+button[disabled] {
+    opacity: 0.5; /* Deixa o botão mais transparente quando desabilitado */
+    /*cursor: not-allowed; /* Muda o cursor para indicar que o botão não pode ser clicado */
+}
+.classEntrar{ /* Classe para o botão "Entrar" */
+    /*background: transparent;*/
+    border: 1px solid #fff;
+    cursor: pointer; /* Mãozinha */
+    color: rgb(120, 115, 115);
+}
+.classRecuperar{ /* Classe para o botão "Recuperar senha" */
+    background: transparent;
+    border: 1px solid #fff;
+    cursor: pointer; /* Mãozinha */
+    color: rgb(255, 255, 255);
+}
+.classRegistrar{ /* Classe para o botão "Registrar" */
+    background: transparent;
+    border: 1px solid #fff;
+    cursor: pointer; /* Mãozinha */
+    color: rgb(255, 255, 255);
+}
+.error {
+    color: rgb(255, 0, 0); /* Cor vermelha para mensagens de erro */
+    /*background:rgb(246, 3, 3);*/
+    font-size: 14px; /* Tamanho da fonte para mensagens de erro */
+    font-weight: bold; /* Mensagens de erro em negrito */
+    margin-top: 5px; /* Espaçamento acima da mensagem de erro */
+    display: none; /* Esconde as mensagens de erro por padrão */
+}
+
+/* Páginas */
+
+/*
+login
+register
+*/
+
+.home {
+        font-family: Arial, sans-serif;
+        font-size: 24px;
+        text-align:center;
+        margin-top: 50px;
+        color: #333;
+        /*
+        background:url("https://www.flavorpaper.com/cdn/shop/files/Money-Color-of-Money-Warhol-Wallpaper-B.jpg?v=1737935653&width=2000");
+        background-size: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        height: 300vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        */
+    }
+        
+p{
+    margin: 0;
+    padding: 0;
+    font-family: arial, serif;
+    }
+    .pBody01 {
+        font-size: 16px;
+        text-align: center;
+        margin-top: 20px;
+        color: #333;
+        font-weight: bold;
+        
+
+    }
+    .pBody02 {
+        font-size: 14px;
+        text-align: center;
+        margin-top: 20px;
+        color: #333;
+        
+    }
+    .pBody03 {
+        font-size: 14px;
+        text-align: center;
+        margin-top: 20px;
+        color: #333;
+        
+    }

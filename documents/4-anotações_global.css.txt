@@ -1,0 +1,38 @@
+CONFIGURAÇÕES GLOBAIS
+
+
+button:active{
+    opacity: 0.9; /* Efeito de clique - botão fica um pouco transparente quando clicado */
+    color: #000000; /* Muda a cor do texto */
+}
+
+button[disabled] {
+    opacity: 0.5; /* Deixa o botão mais transparente quando desabilitado */
+    /*cursor: not-allowed; /* Muda o cursor para indicar que o botão não pode ser clicado */
+}
+.classEntrar{ /* Classe para o botão "Entrar" */
+    /*background: transparent;*/
+    border: 1px solid #fff;
+    cursor: pointer; /* Mãozinha */
+    color: rgb(120, 115, 115);
+}
+.classRecuperar{ /* Classe para o botão "Recuperar senha" */
+    background: transparent;
+    border: 1px solid #fff;
+    cursor: pointer; /* Mãozinha */
+    color: rgb(255, 255, 255);
+}
+.classRegistrar{ /* Classe para o botão "Registrar" */
+    background: transparent;
+    border: 1px solid #fff;
+    cursor: pointer; /* Mãozinha */
+    color: rgb(255, 255, 255);
+}
+.error {
+    color: rgb(255, 0, 0); /* Cor vermelha para mensagens de erro */
+    /*background:rgb(246, 3, 3);*/
+    font-size: 14px; /* Tamanho da fonte para mensagens de erro */
+    font-weight: bold; /* Mensagens de erro em negrito */
+    margin-top: 5px; /* Espaçamento acima da mensagem de erro */
+    display: none; /* Esconde as mensagens de erro por padrão */
+}

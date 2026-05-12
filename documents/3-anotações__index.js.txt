@@ -1,0 +1,219 @@
+function validateFields() {
+    togglebuttonsDisabled();
+    toggleEmailErrors();
+    togglePasswordErrors();
+}
+
+function isEmailValid() {
+    const email = document.getElementById('email').value;
+    if (!email) return false;
+    return validateEmail(email);
+}
+
+function toggleEmailErrors() {
+    const email = document.getElementById('email').value;
+    const emailRequiredError = document.getElementById('email-required-error');
+    const emailInvalidError = document.getElementById('email-invalid-error');
+
+    emailRequiredError.style.display = email ? "none" : "block";
+    emailInvalidError.style.display = validateEmail(email) || !email ? "none" : "block";
+}
+
+function togglePasswordErrors() {
+    const password = document.getElementById('password').value;
+    const passwordRequiredError = document.getElementById('password-required-error');
+    
+    passwordRequiredError.style.display = password ? "none" : "block";
+}
+
+function togglebuttonsDisabled() {
+    const emailValid = isEmailValid();
+    const passwordValid = isPasswordValid();
+    
+    document.getElementById('recuperarSenha').disabled = !emailValid;
+    document.getElementById('login-button').disabled = !emailValid || !passwordValid;
+    document.getElementById('registrar').disabled = !emailValid || !passwordValid;
+}
+
+function isPasswordValid() {
+    const password = document.getElementById('password').value;
+    if (!password) {
+        return false; // O campo de senha está vazio
+    }
+    return true; // A senha é válida (pode adicionar mais validações, como comprimento mínimo, caracteres especiais, etc.)
+}
+
+function validateEmail(email) {// Função para validar o formato do email usando uma expressão regular simples
+    return /\S+@\S+\.\S+/.test(email);
+}
+    // A expressão regular /\S+@\S+\.\S+/ verifica se o email contém pelo menos um caractere antes do símbolo "@",
+    // seguido por pelo menos um caractere, um ponto e pelo menos um caractere após o ponto.
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Por gentileza, revise e aplique as melhorias a seguir na pasta index.js, a saber pelo caminho:
+
+<script src="index.js"></script>.
+
+Melhorias:
+
+const form = { email: () => document.getElementById('email'),
+emailInvalidError: () => document.getElementById('email-invalid-error'),
+emailRequiredError: () => document.getElementById('email-required-error'),
+password: () => document.getElementById('password'),
+passwordRequiredError: () => document.getElementById('password-required-error'),
+recuperarSenhaButton: () => document.getElementById('recuperarSenha'),
+loginButton: () => document.getElementById('login-button'),
+registrarButton: () => document.getElementById('registrar'),
+}
+
+Com certeza! Centralizar a seleção de elementos em um objeto form é uma excelente prática. Isso torna o código muito mais organizado, 
+facilita a manutenção (caso você precise mudar um ID no HTML, muda apenas em um lugar no JS) e melhora a legibilidade.
+
+Aqui está a refatoração do arquivo index.js aplicando o objeto form e atualizando todas as funções para utilizá-lo:
+
+
+const form = {
+    email: () => document.getElementById('email'),
+    emailInvalidError: () => document.getElementById('email-invalid-error'),
+    emailRequiredError: () => document.getElementById('email-required-error'),
+    password: () => document.getElementById('password'),
+    passwordRequiredError: () => document.getElementById('password-required-error'),
+    recuperarSenhaButton: () => document.getElementById('recuperarSenha'),
+    loginButton: () => document.getElementById('login-button'),
+    registrarButton: () => document.getElementById('registrar'),
+}
+
+function validateFields() {
+    togglebuttonsDisabled();
+    toggleEmailErrors();
+    togglePasswordErrors();
+}
+
+function isEmailValid() {
+    const email = form.email().value;
+    if (!email) return false;
+    return validateEmail(email);
+}
+
+function toggleEmailErrors() {
+    const email = form.email().value;
+    const emailRequiredError = form.emailRequiredError();
+    const emailInvalidError = form.emailInvalidError();
+
+    emailRequiredError.style.display = email ? "none" : "block";
+    emailInvalidError.style.display = validateEmail(email) || !email ? "none" : "block";
+function togglePasswordErrors() {
+    const password = form.password().value;
+    const passwordRequiredError = form.passwordRequiredError();
+    
+    passwordRequiredError.style.display = password ? "none" : "block";
+}
+
+function togglebuttonsDisabled() {
+    const emailValid = isEmailValid();
+    const passwordValid = isPasswordValid();
+    
+    form.recuperarSenhaButton().disabled = !emailValid;
+    form.loginButton().disabled = !emailValid || !passwordValid;
+    form.registrarButton().disabled = !emailValid || !passwordValid;
+}
+
+function isPasswordValid() {
+    const password = form.password().value;
+    if (!password) {
+        return false; // O campo de senha está vazio
+    }
+}
+}
+
+O que foi feito:
+
+Criação do objeto form: Adicionado ao topo do arquivo para servir como o "dicionário" de elementos do DOM.
+Substituição de document.getElementById: Todas as funções agora chamam form.nomeDoElemento().
+Nota: Como as propriedades do objeto são funções (ex: email: () => ...), você precisa chamá-las com parênteses () antes de acessar propriedades como .value ou .style.
+Limpeza: O código ficou mais conciso e evita a repetição de strings de ID espalhadas por várias funções.
+Essa abordagem com funções de seta no objeto é útil porque garante que o elemento será buscado no DOM no exato momento em que for necessário, evitando erros caso o script rode 
+antes do carregamento total da página.
+
+Por que não vejo as mudanças na pasta index.js?
+
+
+É comum que isso aconteça durante o desenvolvimento web. Se você já copiou o código para o seu arquivo, mas as mudanças não aparecem no navegador ou no comportamento da página, 
+os motivos mais prováveis são:
+
+Cache do Navegador: O navegador pode estar guardando uma versão antiga do seu arquivo index.js. Tente um "Hard Refresh" pressionando Ctrl + F5 (ou Cmd + Shift + R no Mac).
+Arquivo não salvo: Verifique se você salvou o arquivo no seu editor (VS Code, por exemplo). Geralmente aparece uma "bolinha" na aba do arquivo se ele tiver alterações não salvas.
+Caminho do Script: Verifique se o arquivo index.js está na mesma pasta que o seu index.html. Se estiver em subpastas, o caminho no <script src="..."> precisa refletir isso.
+Aplicação do Código: Como sou um assistente, eu forneço o código para você, mas você precisa aplicá-lo manualmente no seu arquivo local.
+Abaixo, apresento o arquivo index.js atualizado com o objeto form que você solicitou, substituindo as chamadas diretas ao DOM para garantir que a estrutura que discutimos esteja corretamente 
+implementada:
+
+const form = {
+    email: () => document.getElementById('email'),
+    emailInvalidError: () => document.getElementById('email-invalid-error'),
+    emailRequiredError: () => document.getElementById('email-required-error'),
+    password: () => document.getElementById('password'),
+    passwordRequiredError: () => document.getElementById('password-required-error'),
+    recuperarSenhaButton: () => document.getElementById('recuperarSenha'),
+    loginButton: () => document.getElementById('login-button'),
+    registrarButton: () => document.getElementById('registrar'),
+}
+
+function validateFields() {
+    togglebuttonsDisabled();
+    toggleEmailErrors();
+}
+
+function isEmailValid() {
+    const email = form.email().value;
+    if (!email) return false;
+    return validateEmail(email);
+}
+
+function toggleEmailErrors() {
+    const email = form.email().value;
+    const emailRequiredError = form.emailRequiredError();
+    const emailInvalidError = form.emailInvalidError();
+
+    emailRequiredError.style.display = email ? "none" : "block";
+    emailInvalidError.style.display = validateEmail(email) || !email ? "none" : "block";
+}
+
+function togglePasswordErrors() {
+    const password = form.password().value;
+    const passwordRequiredError = form.passwordRequiredError();
+    
+    passwordRequiredError.style.display = password ? "none" : "block";
+}
+{
+    const emailValid = isEmailValid();
+    const passwordValid = isPasswordValid();
+    
+    form.recuperarSenhaButton().disabled = !emailValid;
+    form.loginButton().disabled = !emailValid || !passwordValid;
+    form.registrarButton().disabled = !emailValid || !passwordValid;
+}
+
+function isPasswordValid() {
+    const password = form.password().value;
+    if (!password) {
+        return false; // O campo de senha está vazio
+    }
+}
+
+
+function validateEmail(email) {
+    return /\S+@\S+\.\S+/.test(email);
+}
+
+
+
+Certifique-se de que no seu HTML o script está sendo chamado corretamente:
+
+
+<script src="index.js"></script>
+
+
+Se você estiver usando o Live Server no VS Code, as mudanças devem aparecer automaticamente após salvar o arquivo.
+Se ainda assim não funcionar, verifique o Console do Desenvolvedor (F12 -> aba Console) para ver se existe algum erro de sintaxe impedindo o script de rodar.
