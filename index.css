@@ -6,11 +6,12 @@ form {
     border-radius: 15px;
     backdrop-filter: blur(15px);
     box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 3px solid rgba(255,255,255,0.1);
+    
 }
 
 .form-field {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     display: flex;
     flex-direction: column;
 }

@@ -1,0 +1,31 @@
+o que houve? : epohx@Flavio-AorusElite-PC MINGW64 ~/Documents/PROGRAMAÇÃO/HTML-CSS-JS/Prof. Paulo/Controle-de-Gastos/Controle-de-Gastos-2026 (main)
+$ git add ..
+fatal: ..: '..' is outside repository at 'C:/Users/epohx/Documents/PROGRAMAÇÃO/HTML-CSS-JS/Prof. Paulo/Controle-de-Gastos/Controle-de-Gastos-2026'
+edit
+Thought for 3.8 seconds
+
+O que aconteceu foi um pequeno erro de digitação no comando do Git.
+
+No terminal, o símbolo de ponto tem significados muito diferentes:
+
+. (um ponto): Significa "este diretório atual".
+.. (dois pontos): Significa "voltar para a pasta pai" (sair da pasta onde você está e ir para a de cima).
+Quando você digitou git add .., você disse ao Git: "Adicione todos os arquivos da pasta que está acima desta aqui". O Git respondeu com um erro porque a pasta de cima está fora do seu repositório (ela é a pasta onde você guarda todos os seus projetos, e não o projeto específico do Controle de Gastos).
+
+✅ Como corrigir:
+Se você quer adicionar todas as alterações que fez no seu projeto para salvar no GitHub, o comando correto é com apenas um ponto:
+
+git add .
+🚀 Fluxo completo para você não errar:
+Depois de rodar o git add ., você precisa de mais dois comandos para que as alterações realmente subam para o servidor:
+
+Adiciona os arquivos:
+
+git add .
+Cria a "etiqueta" (commit) descrevendo o que você fez:
+
+git commit -m "Ajustes de navegação, auth-guard e correções de caminhos"
+Envia para o GitHub:
+
+git push origin main
+Dica: Sempre que quiser adicionar "tudo o que está nesta pasta", lembre-se: um ponto só! 😊

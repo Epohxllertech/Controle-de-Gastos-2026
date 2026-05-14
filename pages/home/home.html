@@ -22,12 +22,70 @@
         <p class="pBody03">Explore as funcionalidades do nosso sistema e comece a organizar suas finanças hoje mesmo!</p>
     </div>
     
+<!-- SEÇÃO DE TRANSAÇÕES -->
+<div class="transaction-container">
+    <div class="form-card">
+        <h2>Novo Lançamento</h2>
+        
+        <div class="form-grid">
+            <!-- Descrição -->
+            <div class="form-field">
+                <label for="trans-desc">Descrição</label>
+                <input type="text" id="trans-desc" placeholder="Ex: Almoço, Salário...">
+            </div>
+
+            <!-- Valor -->
+            <div class="form-field">
+                <label for="trans-valor">Valor (R$)</label>
+                <input type="number" id="trans-valor" step="0.01" placeholder="0,00">
+            </div>
+
+            <!-- Tipo -->
+            <div class="form-field">
+                <label for="trans-tipo">Tipo</label>
+                <select id="trans-tipo" class="custom-select">
+                    <option value="despesa">🔴 Despesa</option>
+                    <option value="receita">🟢 Receita</option>
+                </select>
+            </div>
+
+            <!-- Categoria -->
+            <div class="form-field">
+                <label for="trans-cat">Categoria</label>
+                <select id="trans-cat" class="custom-select">
+                    <option value="Alimentação">Alimentação</option>
+                    <option value="Lazer">Lazer</option>
+                    <option value="Transporte">Transporte</option>
+                    <option value="Saúde">Saúde</option>
+                    <option value="Educação">Educação</option>
+                    <option value="Outros">Outros</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="button" class="classEntrar" onclick="saveTransaction()">Salvar Lançamento</button>
+    </div>
+</div>
+
+<!-- LISTA DE TRANSAÇÕES (Onde os dados do banco aparecerão) -->
+<div class="list-container">
+    <h3>Histórico de Lançamentos</h3>
+    <div id="transactions-list">
+        <!-- Os dados do Firebase entrarão aqui via JavaScript -->
+        <p style="text-align: center; color: #ccc;">Carregando seus lançamentos...</p>
+    </div>
+</div>
+
+
     <!-- Botão de Sair -->
     <button type="button" class="classRecuperar" onclick="logout()" style="width: auto; padding: 10px 40px;">Sair do Sistema</button>
 
     <!-- 1º: SDKs do Firebase -->
     <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore-compat.js"></script>
+
+
 
     <!-- 2º: Configuração do Firebase -->
     <script>
@@ -42,11 +100,14 @@
         firebase.initializeApp(firebaseConfig);
     </script>
 
-    <!-- 3º: Guard de Autenticação (Verifica se está logado) -->
+    <!-- 3º: Guard de Autenticação (AJUSTE DE CAMINHO) -->
+    <!-- Tente mudar de ../../ para ../ se o auth-guard estiver na pasta 'pages' -->
+    <!-- Ou mantenha ../../ se estiver na raiz. SE DER ERRO, tente colocar o caminho completo -->
     <script src="../../auth-guard.js"></script>
 
-    <!-- 4º: Scripts da Página -->
-    <script src="home.html"></script>
+    <!-- 4º: Lógica da Home (Sempre no mesmo nível da home.html) -->
+    <script src="home.js"></script>
+
     <script>
         function logout() {
             firebase.auth().signOut().then(() => {

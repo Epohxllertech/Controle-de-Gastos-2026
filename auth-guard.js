@@ -27,3 +27,9 @@ function checkAuth() {
 }
 
 checkAuth();
+
+/*
+pages\home\home.html
+pages\home\home.js
+auth-guard.js
+*/
