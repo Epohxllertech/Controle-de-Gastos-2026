@@ -3,19 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Impede que o usuário volte para cá após deslogar -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <title>HOME DO CONTROLE DE GASTOS</title>
+    <!-- Verifique se este caminho está correto para chegar ao seu CSS -->
     <link rel="stylesheet" href="../../global.css">
 </head>
-<body>
-    <h1 class="home">Bem-vindo ao Controle de Gastos</h1>
-    <p class="pBody01">Gerencie suas finanças de forma eficiente e fácil.</p>
-    <p class="pBody02">Acesse suas despesas, receitas e relatórios para manter o controle total sobre suas finanças.</p>
-    <p class="pBody03">Explore as funcionalidades do nosso sistema e comece a organizar suas finanças hoje mesmo!</p>
-    
-    <button type="button" class="classRecuperar" onclick="logout()">Sair</button>
+<body class="centralize">
 
+    <h1 class="home">Bem-vindo ao Controle de Gastos</h1>
+    
+    <div style="text-align: center; max-width: 700px; margin-bottom: 30px; padding: 0 20px;">
+        <p class="pBody01">Gerencie suas finanças de forma eficiente e fácil.</p>
+        <p class="pBody02">Acesse suas despesas, receitas e relatórios para manter o controle total sobre suas finanças.</p>
+        <p class="pBody03">Explore as funcionalidades do nosso sistema e comece a organizar suas finanças hoje mesmo!</p>
+    </div>
+    
+    <!-- Botão de Sair -->
+    <button type="button" class="classRecuperar" onclick="logout()" style="width: auto; padding: 10px 40px;">Sair do Sistema</button>
+
+    <!-- 1º: SDKs do Firebase -->
     <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+
+    <!-- 2º: Configuração do Firebase -->
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCuJVEvq8QgeqONgQXF54-TVfQuAd8HsCQ",
@@ -26,19 +40,27 @@
             appId: "1:555510424243:web:46af1abed54bd9646486c6"
         };
         firebase.initializeApp(firebaseConfig);
+    </script>
 
-        firebase.auth().onAuthStateChanged(user => {
-            if (!user) {
-                window.location.href = "../../index.html";
-            }
-        });
+    <!-- 3º: Guard de Autenticação (Verifica se está logado) -->
+    <script src="../../auth-guard.js"></script>
 
+    <!-- 4º: Scripts da Página -->
+    <script src="home.html"></script>
+    <script>
         function logout() {
             firebase.auth().signOut().then(() => {
-                window.location.href = "../../index.html";
+                alert("Sessão encerrada com sucesso!");
+                // O replace evita que o usuário volte para a home usando a seta do navegador
+                window.location.replace("../../index.html");
+            }).catch((error) => {
+                console.error("Erro ao sair:", error);
             });
         }
     </script>
+    
+    <footer> 
+        <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESERVADOS *</p>
+    </footer>
 </body>
 </html>
-

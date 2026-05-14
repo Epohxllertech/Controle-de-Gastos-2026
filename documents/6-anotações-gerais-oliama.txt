@@ -1,0 +1,2091 @@
+E aí! Tudo tranquilo por aqui. E com você?
+
+Como posso te ajudar hoje? 😊
+
+
+A partir do código a seguir, crie o código para o arquivo register.js, com todas as funcionalidades exigidas. Obrigado. <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REGISTRO DO CONTROLE DE GASTOS</title>
+<link rel="stylesheet" href="../../global.css">
+<link rel="stylesheet" href="../../index.css"> <!-- Adicionei para manter o estilo -->
+</head>
+<body class="centralize">
+<h1 class="home">Bem-vindo ao Registro do Controle de Gastos</h1>
+
+<div id="content" style="text-align: center; margin-bottom: 20px;">
+<p class="pBody03">Registre-se para ter acesso a todas as funcionalidades do nosso sistema
+<p class="pBody03">comece a organizar suas finanças hoje mesmo!</p></p>
+<p class="pBody03">Preencha os dados abaixo para criar sua conta.</p>
+</div>
+
+<form id="register-form">
+<div class="form-field">
+<label for="reg-nome">Nome:</label>
+<input type="text" id="reg-nome" placeholder="Digite seu nome completo">
+</div>
+
+<div class="form-field">
+<label for="reg-email">E-mail:</label>
+<input type="email" id="reg-email" placeholder="Digite seu melhor e-mail" onchange="onChangeEmail()">
+</div>
+
+<div class="form-field">
+<label for="reg-password">Senha:</label>
+<input type="password" id="reg-password" placeholder="Crie uma senha">
+</div>
+
+<div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+<button type="button" class="classEntrar" onclick="handleRegister()">Criar Conta</button>
+<button type="button" class="classRecuperar" onclick="goBack()">Voltar</button>
+</div>
+</form>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+apiKey: "AIzaSyCuJVEvq8QgeqONgQXF54-TVfQuAd8HsCQ",
+authDomain: "controle-de-gastos-1f442.firebaseapp.com",
+projectId: "controle-de-gastos-1f442",
+storageBucket: "controle-de-gastos-1f442.firebasestorage.app",
+messagingSenderId: "555510424243",
+appId: "1:555510424243:web:46af1abed54bd9646486c6"
+};
+firebase.initializeApp(firebaseConfig);
+
+// Função para criar a conta
+function handleRegister() {
+const email = document.getElementById('reg-email').value;
+const password = document.getElementById('reg-password').value;
+const nome = document.getElementById('reg-nome').value;
+
+if (!nome || !email || !password) {
+alert("Por favor, preencha todos os campos!");
+return;
+}
+
+// Chama a função de criar usuário do Firebase
+firebase.auth().createUserWithEmailAndPassword(email, password)
+.then((userCredential) => {
+alert("Conta criada com sucesso! Bem-vindo, " + nome);
+window.location.href = "../../index.html"; // Volta para o login
+})
+.catch((error) => {
+console.error("Erro ao registrar:", error);
+alert("Erro ao criar conta: " + error.message);
+});
+}
+
+function goBack() {
+window.location.href = "../../index.html";
+}
+</script>
+<!--
+<footer> <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESEVADOS * </p></footer>
+-->
+</body>
+</html>
+edit
+Thought for 8.4 seconds
+
+Para criar o arquivo register.js, precisamos extrair a lógica que estava dentro da tag <script> do seu HTML e aprimorá-la.
+
+Um detalhe importante: no seu HTML, você usa createUserWithEmailAndPassword, mas isso cria apenas o login (email e senha). Para que o Nome do usuário seja salvo no Firebase, precisamos usar a função updateProfile.
+
+Aqui está o código completo para o seu arquivo register.js:
+
+/**
+ * register.js
+ * Lógica de registro de usuários para o Sistema de Controle de Gastos
+ */
+
+// Função para validar ou processar mudanças no e-mail (chamada pelo onchange no HTML)
+function onChangeEmail() {
+    const email = document.getElementById('reg-email').value;
+    console.log("E-mail alterado para: " + email);
+    // Aqui você poderia adicionar uma validação de formato de e-mail em tempo real
+}
+
+// Função principal para criar a conta
+async function handleRegister() {
+    // Captura dos elementos do DOM
+    const nomeInput = document.getElementById('reg-nome');
+    const emailInput = document.getElementById('reg-email');
+    const passwordInput = document.getElementById('reg-password');
+
+    const nome = nomeInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    // 1. Validação básica de campos vazios
+    if (!nome || !email || !password) {
+        alert("Por favor, preencha todos os campos!");
+        return;
+    }
+
+    // 2. Validação mínima de senha (ex: 6 caracteres, exigência do Firebase)
+    if (password.length < 6) {
+        alert("A senha deve ter pelo menos 6 caracteres.");
+        return;
+    }
+
+    try {
+        // 3. Criação do usuário no Firebase Authentication
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        
+        // 4. Salvando o Nome do usuário no perfil do Firebase
+        // O createUserWithEmailAndPassword não salva o nome, apenas email e senha.
+        // Usamos o updateProfile para salvar o nome exibido.
+        await userCredential.user.updateProfile({
+            displayName: nome
+        });
+
+        alert(`Conta criada com sucesso! Bem-vindo(a), ${nome}`);
+        
+        // Redireciona para a página de login/index
+        window.location.href = "../../index.html"; 
+        
+    } catch (error) {
+        console.error("Erro ao registrar usuário:", error);
+        
+        // Tratamento de erros comuns do Firebase
+        if (error.code === 'auth/email-already-in-use') {
+            alert("Este e-mail já está sendo utilizado por outra conta.");
+        } else if (error.code === 'auth/invalid-email') {
+            alert("O e-mail digitado é inválido.");
+        } else if (error.code === 'auth/weak-password') {
+            alert("A senha escolhida é muito fraca.");
+        } else {
+            alert("Erro ao criar conta: " + error.message);
+        }
+    }
+}
+
+// Função para voltar à página anterior
+function goBack() {
+    window.location.href = "../../index.html";
+}
+⚠️ Ajustes necessários no seu HTML
+Para que o arquivo .js funcione corretamente, você deve fazer duas pequenas alterações no seu arquivo HTML:
+
+Remover a lógica interna: Apague todo o bloco <script> que contém as funções handleRegister e goBack (mantenha apenas a parte da configuração do Firebase, se quiser, ou mova-a também para um arquivo firebase-config.js).
+Importar o arquivo JS: Adicione a tag <script> chamando o arquivo register.js abaixo das SDKs do Firebase.
+Como deve ficar o final do seu HTML:
+
+    <!-- Firebase SDKs (Sempre vêm PRIMEIRO) -->
+    <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+    
+    <script>
+        // Configuração do Firebase (Pode ficar aqui ou num arquivo separado)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCuJVEvq8QgeqONgQXF54-TVfQuAd8HsCQ",
+            authDomain: "controle-de-gastos-1f442.firebaseapp.com",
+            projectId: "controle-de-gastos-1f442",
+            storageBucket: "controle-de-gastos-1f442.firebasestorage.app",
+            messagingSenderId: "555510424243",
+            appId: "1:555510424243:web:46af1abed54bd964646c"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <!-- Importação do arquivo de lógica (Sempre DEPOIS do Firebase) -->
+    <script src="register.js"></script>
+</body>
+</html>
+O que foi melhorado no código:
+async/await: Usei async/await em vez de .then(), o que torna o código mais moderno, limpo e fácil de ler.
+updateProfile: Agora o nome digitado no campo "Nome" é realmente salvo na conta do Firebase.
+Tratamento de Erros: Adicionei verificações para erros específicos do Firebase (como e-mail já existente ou senha curta), evitando que o usuário receba mensagens genéricas e confusas.
+trim(): Adicionado para evitar que o usuário envie espaços em branco acidentais no início ou fim do e-mail e nome.
+
+revise os seguintes arquivos .css e implemente as melhorias necessárias. 1º) index.css: body {
+background-color: #489448;
+background-image: url("https://www.flavorpaper.com/cdn/shop/files/Money-Color-of-Money-Warhol-Wallpaper-B.jpg?v=1737935653&width=2000");
+}
+/* background-size: 100%;
+background-position: center;
+background-repeat: no-repeat;
+background-attachment: fixed;
+height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+/*
+.centralize{
+display: flex;
+margin: 0; }
+/*
+Remove a margem padrão do body
+*/
+
+
+
+
+input{
+padding: 5px;
+margin-bottom: 10px; /* Espaçamento entre os botões
+border-radius: 7px;
+font-size: 15px;
+}
+
+form {
+width: 300px; /* Define uma largura fixa para o formulário */
+}
+label {
+font-family: 'Courier New', Courier, monospace;
+font-size: 20px;
+font-weight: bold;
+margin-bottom: 50px; /* Espaçamento entre o label e o input */
+color: rgb(97, 255, 91);
+background-color: #011c0145;
+
+}
+input, button {
+background-color: #073a035d;
+padding: 5px;
+margin-bottom: 10px; /* Espaçamento entre os botões */
+border-radius: 7px;
+font-size: 20px;
+width: -webkit-fill-available; /* Faz o botão ocupar toda a largura disponível */
+box-shadow:
+0 5px 20px 0 rgb(114, 245, 67), inset 0 0 3px;
+}
+
+
+input{
+/*border-radius: 7px; /* Bordas arredondadas para os campos de entrada */
+margin-bottom: 7px; /* Espaçamento entre os botões */
+backdrop-filter: blur(10);
+}
+button:active{
+opacity: 0.9; /* Efeito de clique - botão fica um pouco transparente quando clicado */
+color: #000000; /* Muda a cor do texto */
+}
+button{
+cursor: pointer; /* Mãozinha - apenas para os botões*/
+font-weight: bold; /* Deixa o texto dos botões em negrito */
+box-shadow: 0 100px 5px 0 rgb(67, 245, 177), inset 1 0 20px;
+position:relative;
+overflow:hidden;
+margin-bottom: 7px; /* Espaçamento entre os botões */
+border-radius: 7px;/*
+/*font-size: 15px;*/
+
+
+
+}
+
+form-field {
+margin-bottom: 100px; /* Espaçamento entre os campos do formulário */
+}
+
+button[disabled] {
+opacity: 0.5; /* Deixa o botão mais transparente quando desabilitado */
+/*cursor: not-allowed; /* Muda o cursor para indicar que o botão não pode ser clicado */
+}
+.classEntrar{ /* Classe para o botão "Entrar" */
+/*background: transparent;*/
+border: 1px solid #fff;
+cursor: pointer; /* Mãozinha */
+color: rgb(120, 115, 115);
+}
+.classRecuperar{ /* Classe para o botão "Recuperar senha" */
+background: transparent;
+border: 1px solid #fff;
+cursor: pointer; /* Mãozinha */
+color: rgb(255, 255, 255);
+}
+.classRegistrar{ /* Classe para o botão "Registrar" */
+background: transparent;
+border: 1px solid #fff;
+cursor: pointer; /* Mãozinha */
+color: rgb(255, 255, 255);
+}
+.error {
+color: rgb(255, 0, 0); /* Cor vermelha para mensagens de erro */
+/*background:rgb(246, 3, 3);*/
+font-size: 14px; /* Tamanho da fonte para mensagens de erro */
+font-weight: bold; /* Mensagens de erro em negrito */
+margin-top: 5px; /* Espaçamento acima da mensagem de erro */
+display: none; /* Esconde as mensagens de erro por padrão */
+}
+
+footer{
+font-family: Arial, sans-serif;
+font-size: 15px;
+text-align:center;
+margin-top: 50px;
+color: #06fa0e;
+align-items: center;
+position:relative;
+bottom: -100px;
+box-shadow: 0 5px 20px 0 rgb(114, 245, 67), inset 0 0 3px;
+background-color: #021801b8;
+padding: 5px;
+margin-bottom: 10px; /* Espaçamento entre os botões */
+border-radius: 7px;
+} 2°) register.css: "Por gentileza criar código" e finalzando com o 3°) global.css: /*
+body {
+margin: 0;
+}
+*/
+
+
+
+.centralize{
+display: flex;
+
+justify-content: center; /* Centraliza horizontalmente */
+align-items: center; /* Centraliza verticalmente */
+height: 100vh; /* Define a altura do body para ocupar toda a altura da janela de visualização */
+width: 1535px;
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: column;
+}
+
+.loading {
+background: rgba(0, 16, 0, 0.51);
+position: fixed;
+
+}
+
+.loading label{
+font-family: Arial, sans-serif;
+font-size: 15px;
+text-align:center;
+margin-top: 50px;
+color: #022503;
+}
+
+button:active{
+opacity: 0.9; /* Efeito de clique - botão fica um pouco transparente quando clicado */
+color: #000000; /* Muda a cor do texto */
+}
+
+button[disabled] {
+opacity: 0.5; /* Deixa o botão mais transparente quando desabilitado */
+/*cursor: not-allowed; /* Muda o cursor para indicar que o botão não pode ser clicado */
+}
+.classEntrar{ /* Classe para o botão "Entrar" */
+background:rgb( 0, 16, 0);
+border: 1px solid #fff;
+cursor: pointer; /* Mãozinha */
+color: rgb(97, 255, 91);
+}
+.classRecuperar{ /* Classe para o botão "Recuperar senha" */
+background:rgb( 0, 16, 0);
+cursor: pointer; /* Mãozinha */
+color: rgb(97, 255, 91);
+border: 1px solid #0d0d0d;
+}
+
+.classRecuperarSenha{ /* Classe para o botão "Recuperar senha" */
+background:rgb( 0, 16, 0);
+border: 1px solid #fff;
+cursor: pointer; /* Mãozinha */
+color: rgb(97, 255, 91);
+}
+.classRegistrar{ /* Classe para o botão "Registrar" */
+background:rgb( 0, 16, 0);
+cursor: pointer; /* Mãozinha */
+color: rgb(97, 255, 91);
+border: 1px solid #0d0d0d;
+}
+.error {
+color: rgb(255, 0, 0); /* Cor vermelha para mensagens de erro */
+/*background:rgb(246, 3, 3);*/
+font-size: 14px; /* Tamanho da fonte para mensagens de erro */
+font-weight: bold; /* Mensagens de erro em negrito */
+margin-top: 5px; /* Espaçamento acima da mensagem de erro */
+display: none; /* Esconde as mensagens de erro por padrão */
+}
+
+/* Páginas */
+
+/*
+login
+register
+*/
+
+.home {
+font-family: Arial, sans-serif;
+font-size: 35px;
+text-align:center;
+margin-top: 50px;
+color: #07ea0a;
+box-shadow: 0 5px 20px 0 rgb(114, 245, 67), inset 0 0 3px;
+background-color: #073a035d;
+padding: 5px;
+margin-bottom: 10px; /* Espaçamento entre os botões */
+border-radius: 7px;
+
+
+background:url("https://www.flavorpaper.com/cdn/shop/files/Money-Color-of-Money-Warhol-Wallpaper-B.jpg?v=1737935653&width=2000");
+background-size: 100%;
+height: 10%;
+align-items: center;
+}
+
+/*
+
+background-position: center;
+background-repeat: no-repeat;
+background-attachment: fixed;
+
+display: flex;
+justify-content: center;
+align-items: center;
+
+}
+*/
+p{
+margin: 0;
+padding: 0;
+font-family: arial, serif;
+}
+.pBody01 {
+font-size: 16px;
+text-align: center;
+margin-top: 20px;
+color: #333;
+font-weight: bold;
+
+
+}
+.pBody02 {
+font-size: 14px;
+text-align: center;
+margin-top: 20px;
+color: #333;
+
+}
+
+.pBody03 {
+font-size: 15px;
+font-size: 15px;
+font-family: Arial, sans-serif;
+font-weight: bold;
+text-align: center;
+margin-top: 20px;
+color: #07ea0a;
+box-shadow: 0 5px 20px 0 rgb(114, 245, 67), inset 0 0 3px;
+background-color: #073a035d;
+padding: 5px;
+margin-bottom: 10px; /* Espaçamento entre os botões */
+border-radius: 7px;
+}
+edit
+Thought for 256.1 seconds
+
+
+
+
+A partir dos seguinte códigos .html a seguir, analise-os, para em seguida revisar e implementar as melhorias necessárias nos respectivos códigos .css: . seguem códigos .html: 1º... <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOGIN DE CONTROLE DE GASTOS</title>
+<link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="global.css">
+</head>
+<body class="centralize">
+
+<form>
+<div class="form-field">
+<div><label for="nome">Nome:</label></div>
+<input type="text" id="nome" name="nome" placeholder="Digite seu nome">
+</div>
+<div class="form-field">
+<div><label for="email">E-mail:</label></div>
+<!-- Alterado para type="text" temporariamente para evitar que o navegador bloqueie o alerta customizado -->
+<input type="text" name="email" id="email" oninput="validateFields()" placeholder="Digite seu email">
+<div class="error" id="email-invalid-error" style="display:none">Email inválido</div>
+<div class="error" id="email-required-error" style="display:none">Email obrigatório</div>
+</div>
+<div class="form-field">
+<div><label for="password">Senha:</label></div>
+<input type="password" name="password" id="password" oninput="validateFields()" placeholder="Digite sua senha">
+<div class="error" id="password-required-error" style="display:none">Senha obrigatória</div>
+</div>
+
+<div>
+<button type="button" class="classRecuperar" id="recuperarSenha" onclick="recoverPassword()" disabled>Recuperar Senha</button>
+</div>
+<div>
+<button type="button" class="classEntrar" id="login-button" disabled onclick="login()">Entrar</button>
+</div>
+<div>
+<button type="button" class="classRegistrar" id="registrar" onclick="register()">Registrar</button>
+</div>
+</form>
+
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+apiKey: "AIzaSyCuJVEvq8QgeqONgQXF54-TVfQuAd8HsCQ",
+authDomain: "controle-de-gastos-1f442.firebaseapp.com",
+projectId: "controle-de-gastos-1f442",
+storageBucket: "controle-de-gastos-1f442.firebasestorage.app",
+messagingSenderId: "555510424243",
+appId: "1:555510424243:web:46af1abed54bd9646486c6"
+};
+firebase.initializeApp(firebaseConfig);
+</script>
+<script src="index.js"></script>
+<script src="validations.js"></script>
+<script src="loading.js"></script>
+<script src="register.js"></script>
+
+<footer> <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESEVADOS * </p></footer>
+</body>
+</html>
+2° ... <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOME DO CONTROLE DE GASTOS</title>
+<link rel="stylesheet" href="../../global.css">
+</head>
+<body>
+<h1 class="home">Bem-vindo ao Controle de Gastos</h1>
+<h2><p class="pBody01">Gerencie suas finanças de forma eficiente e fácil.</p></h2>
+<p class="pBody02">Acesse suas despesas, receitas e relatórios para manter o controle total sobre suas finanças.</p>
+<p class="pBody03">Explore as funcionalidades do nosso sistema e comece a organizar suas finanças hoje mesmo!</p>
+
+<button type="button" class="classRecuperar" onclick="logout()">Sair</button>
+
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+apiKey: "AIzaSyCuJVEvq8QgeqONgQXF54-TVfQuAd8HsCQ",
+authDomain: "controle-de-gastos-1f442.firebaseapp.com",
+projectId: "controle-de-gastos-1f442",
+storageBucket: "controle-de-gastos-1f442.firebasestorage.app",
+messagingSenderId: "555510424243",
+appId: "1:555510424243:web:46af1abed54bd9646486c6"
+};
+firebase.initializeApp(firebaseConfig);
+
+firebase.auth().onAuthStateChanged(user => {
+if (!user) {
+window.location.href = "../../index.html";
+}
+});
+
+function logout() {
+firebase.auth().signOut().then(() => {
+window.location.href = "../../index.html";
+});
+}
+</script>
+
+<footer> <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESEVADOS * </p></footer>
+<!-- <div class="footerHome"></div> -->
+</body>
+</html>
+
+3°... <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REGISTRO DO CONTROLE DE GASTOS</title>
+<link rel="stylesheet" href="../../global.css">
+<link rel="stylesheet" href="../../index.css"> <!-- Adicionei para manter o estilo -->
+</head>
+<body class="centralize">
+<h1 class="home">Bem-vindo ao Registro do Controle de Gastos</h1>
+
+<div id="content" style="text-align: center; margin-bottom: 20px;">
+<p class="pBody03">Registre-se para ter acesso a todas as funcionalidades do nosso sistema
+<p class="pBody03">comece a organizar suas finanças hoje mesmo!</p></p>
+<p class="pBody03">Preencha os dados abaixo para criar sua conta.</p>
+</div>
+
+<form id="register-form">
+<div class="form-field">
+<label for="reg-nome">Nome:</label>
+<input type="text" id="reg-nome" placeholder="Digite seu nome completo">
+</div>
+
+<div class="form-field">
+<label for="reg-email">E-mail:</label>
+<input type="email" id="reg-email" placeholder="Digite seu melhor e-mail" onchange="onChangeEmail()">
+</div>
+
+<div class="form-field">
+<label for="reg-password">Senha:</label>
+<input type="password" id="reg-password" placeholder="Crie uma senha">
+</div>
+
+<div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+<button type="button" class="classEntrar" onclick="handleRegister()">Criar Conta</button>
+<button type="button" class="classRecuperar" onclick="goBack()">Voltar</button>
+</div>
+</form>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+apiKey: "AIzaSyCuJVEvq8QgeqONgQXF54-TVfQuAd8HsCQ",
+authDomain: "controle-de-gastos-1f442.firebaseapp.com",
+projectId: "controle-de-gastos-1f442",
+storageBucket: "controle-de-gastos-1f442.firebasestorage.app",
+messagingSenderId: "555510424243",
+appId: "1:555510424243:web:46af1abed54bd9646486c6"
+};
+firebase.initializeApp(firebaseConfig);
+
+// Função para criar a conta
+function handleRegister() {
+const email = document.getElementById('reg-email').value;
+const password = document.getElementById('reg-password').value;
+const nome = document.getElementById('reg-nome').value;
+
+if (!nome || !email || !password) {
+alert("Por favor, preencha todos os campos!");
+return;
+}
+
+// Chama a função de criar usuário do Firebase
+firebase.auth().createUserWithEmailAndPassword(email, password)
+.then((userCredential) => {
+alert("Conta criada com sucesso! Bem-vindo, " + nome);
+window.location.href = "../../index.html"; // Volta para o login
+})
+.catch((error) => {
+console.error("Erro ao registrar:", error);
+alert("Erro ao criar conta: " + error.message);
+});
+}
+
+function goBack() {
+window.location.href = "../../index.html";
+}
+</script>
+
+<footer> <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESEVADOS * </p></footer>
+
+</body>
+</html>... Agora revise os seguintes arquivos .css e implemente as melhorias necessárias. 1º) index.css: body {
+background-color: #489448;
+background-image: url("https://www.flavorpaper.com/cdn/shop/files/Money-Color-of-Money-Warhol-Wallpaper-B.jpg?v=1737935653&width=2000");
+}
+/* background-size: 100%;
+background-position: center;
+background-repeat: no-repeat;
+background-attachment: fixed;
+height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+/*
+.centralize{
+display: flex;
+margin: 0; }
+/*
+Remove a margem padrão do body
+*/
+
+
+
+
+input{
+padding: 5px;
+margin-bottom: 10px; /* Espaçamento entre os botões
+border-radius: 7px;
+font-size: 15px;
+}
+
+form {
+width: 300px; /* Define uma largura fixa para o formulário */
+}
+label {
+font-family: 'Courier New', Courier, monospace;
+font-size: 20px;
+font-weight: bold;
+margin-bottom: 50px; /* Espaçamento entre o label e o input */
+color: rgb(97, 255, 91);
+background-color: #011c0145;
+
+}
+input, button {
+background-color: #073a035d;
+padding: 5px;
+margin-bottom: 10px; /* Espaçamento entre os botões */
+border-radius: 7px;
+font-size: 20px;
+width: -webkit-fill-available; /* Faz o botão ocupar toda a largura disponível */
+box-shadow:
+0 5px 20px 0 rgb(114, 245, 67), inset 0 0 3px;
+}
+
+
+input{
+/*border-radius: 7px; /* Bordas arredondadas para os campos de entrada */
+margin-bottom: 7px; /* Espaçamento entre os botões */
+backdrop-filter: blur(10);
+}
+button:active{
+opacity: 0.9; /* Efeito de clique - botão fica um pouco transparente quando clicado */
+color: #000000; /* Muda a cor do texto */
+}
+button{
+cursor: pointer; /* Mãozinha - apenas para os botões*/
+font-weight: bold; /* Deixa o texto dos botões em negrito */
+box-shadow: 0 100px 5px 0 rgb(67, 245, 177), inset 1 0 20px;
+position:relative;
+overflow:hidden;
+margin-bottom: 7px; /* Espaçamento entre os botões */
+border-radius: 7px;/*
+/*font-size: 15px;*/
+
+
+
+}
+
+form-field {
+margin-bottom: 100px; /* Espaçamento entre os campos do formulário */
+}
+
+button[disabled] {
+opacity: 0.5; /* Deixa o botão mais transparente quando desabilitado */
+/*cursor: not-allowed; /* Muda o cursor para indicar que o botão não pode ser clicado */
+}
+.classEntrar{ /* Classe para o botão "Entrar" */
+/*background: transparent;*/
+border: 1px solid #fff;
+cursor: pointer; /* Mãozinha */
+color: rgb(120, 115, 115);
+}
+.classRecuperar{ /* Classe para o botão "Recuperar senha" */
+background: transparent;
+border: 1px solid #fff;
+cursor: pointer; /* Mãozinha */
+color: rgb(255, 255, 255);
+}
+.classRegistrar{ /* Classe para o botão "Registrar" */
+background: transparent;
+border: 1px solid #fff;
+cursor: pointer; /* Mãozinha */
+color: rgb(255, 255, 255);
+}
+.error {
+color: rgb(255, 0, 0); /* Cor vermelha para mensagens de erro */
+/*background:rgb(246, 3, 3);*/
+font-size: 14px; /* Tamanho da fonte para mensagens de erro */
+font-weight: bold; /* Mensagens de erro em negrito */
+margin-top: 5px; /* Espaçamento acima da mensagem de erro */
+display: none; /* Esconde as mensagens de erro por padrão */
+}
+
+footer{
+font-family: Arial, sans-serif;
+font-size: 15px;
+text-align:center;
+margin-top: 50px;
+color: #06fa0e;
+align-items: center;
+position:relative;
+bottom: -100px;
+box-shadow: 0 5px 20px 0 rgb(114, 245, 67), inset 0 0 3px;
+background-color: #021801b8;
+padding: 5px;
+margin-bottom: 10px; /* Espaçamento entre os botões */
+border-radius: 7px;
+} 2°) register.css: "Por gentileza criar código" e finalzando com o 3°) global.css: /*
+body {
+margin: 0;
+}
+*/
+
+
+
+.centralize{
+display: flex;
+
+justify-content: center; /* Centraliza horizontalmente */
+align-items: center; /* Centraliza verticalmente */
+height: 100vh; /* Define a altura do body para ocupar toda a altura da janela de visualização */
+width: 1535px;
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: column;
+}
+
+.loading {
+background: rgba(0, 16, 0, 0.51);
+position: fixed;
+
+}
+
+.loading label{
+font-family: Arial, sans-serif;
+font-size: 15px;
+text-align:center;
+margin-top: 50px;
+color: #022503;
+}
+
+button:active{
+opacity: 0.9; /* Efeito de clique - botão fica um pouco transparente quando clicado */
+color: #000000; /* Muda a cor do texto */
+}
+
+button[disabled] {
+opacity: 0.5; /* Deixa o botão mais transparente quando desabilitado */
+/*cursor: not-allowed; /* Muda o cursor para indicar que o botão não pode ser clicado */
+}
+.classEntrar{ /* Classe para o botão "Entrar" */
+background:rgb( 0, 16, 0);
+border: 1px solid #fff;
+cursor: pointer; /* Mãozinha */
+color: rgb(97, 255, 91);
+}
+.classRecuperar{ /* Classe para o botão "Recuperar senha" */
+background:rgb( 0, 16, 0);
+cursor: pointer; /* Mãozinha */
+color: rgb(97, 255, 91);
+border: 1px solid #0d0d0d;
+}
+
+.classRecuperarSenha{ /* Classe para o botão "Recuperar senha" */
+background:rgb( 0, 16, 0);
+border: 1px solid #fff;
+cursor: pointer; /* Mãozinha */
+color: rgb(97, 255, 91);
+}
+.classRegistrar{ /* Classe para o botão "Registrar" */
+background:rgb( 0, 16, 0);
+cursor: pointer; /* Mãozinha */
+color: rgb(97, 255, 91);
+border: 1px solid #0d0d0d;
+}
+.error {
+color: rgb(255, 0, 0); /* Cor vermelha para mensagens de erro */
+/*background:rgb(246, 3, 3);*/
+font-size: 14px; /* Tamanho da fonte para mensagens de erro */
+font-weight: bold; /* Mensagens de erro em negrito */
+margin-top: 5px; /* Espaçamento acima da mensagem de erro */
+display: none; /* Esconde as mensagens de erro por padrão */
+}
+
+/* Páginas */
+
+/*
+login
+register
+*/
+
+.home {
+font-family: Arial, sans-serif;
+font-size: 35px;
+text-align:center;
+margin-top: 50px;
+color: #07ea0a;
+box-shadow: 0 5px 20px 0 rgb(114, 245, 67), inset 0 0 3px;
+background-color: #073a035d;
+padding: 5px;
+margin-bottom: 10px; /* Espaçamento entre os botões */
+border-radius: 7px;
+
+
+background:url("https://www.flavorpaper.com/cdn/shop/files/Money-Color-of-Money-Warhol-Wallpaper-B.jpg?v=1737935653&width=2000");
+background-size: 100%;
+height: 10%;
+align-items: center;
+}
+
+/*
+
+background-position: center;
+background-repeat: no-repeat;
+background-attachment: fixed;
+
+display: flex;
+justify-content: center;
+align-items: center;
+
+}
+*/
+p{
+margin: 0;
+padding: 0;
+font-family: arial, serif;
+}
+.pBody01 {
+font-size: 16px;
+text-align: center;
+margin-top: 20px;
+color: #333;
+font-weight: bold;
+
+
+}
+.pBody02 {
+font-size: 14px;
+text-align: center;
+margin-top: 20px;
+color: #333;
+
+}
+
+.pBody03 {
+font-size: 15px;
+font-size: 15px;
+font-family: Arial, sans-serif;
+font-weight: bold;
+text-align: center;
+margin-top: 20px;
+color: #07ea0a;
+box-shadow: 0 5px 20px 0 rgb(114, 245, 67), inset 0 0 3px;
+background-color: #073a035d;
+padding: 5px;
+margin-bottom: 10px; /* Espaçamento entre os botões */
+border-radius: 7px;
+}
+edit
+Thought for 56.4 seconds
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Para que seu sistema tenha um visual profissional, moderno e, acima de tudo, consistente, precisamos organizar a hierarquia do CSS.
+
+O maior problema do código anterior era a redundância (estilos de botões repetidos em três lugares) e a falta de responsividade (larguras fixas como 1535px que quebram em telas menores).
+
+Abaixo, apresento a reestruturação completa. O conceito visual agora segue um estilo "Dark Fintech" (Verde Neon, Vidro/Glassmorphism e Tons Escuros).
+
+1. global.css (A Base)
+Este arquivo deve conter tudo que é repetido em todas as páginas: cores, fontes, centralização e o estilo dos botões.
+
+/* Reset básico para consistência entre navegadores */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #0a1f0a; /* Verde bem escuro de fallback */
+    background-image: url("https://www.flavorpaper.com/cdn/shop/files/Money-Color-of-Money-Warhol-Wallpaper-B.jpg?v=1737935653&width=2000");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    color: #fff;
+    min-height: 100vh;
+}
+
+/* Centralização Universal */
+.centralize {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* Título Principal (Estilo Neon Glass) */
+.home {
+    font-size: clamp(24px, 5vw, 35px); /* Fonte responsiva */
+    text-align: center;
+    color: #07ea0a;
+    background-color: rgba(7, 58, 7, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px 0 rgba(114, 245, 67, 0.3);
+    border: 1px solid rgba(114, 245, 67, 0.3);
+    max-width: 90%;
+}
+
+/* Textos do corpo */
+p {
+    margin: 0;
+    padding: 0;
+}
+
+.pBody01, .pBody02, .pBody03 {
+    text-align: center;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 7px;
+}
+
+.pBody01 { font-size: 18px; font-weight: bold; color: #e0e0e0; }
+.pBody02 { font-size: 15px; color: #ccc; }
+.pBody03 { 
+    font-size: 15px; 
+    color: #07ea0a; 
+    background-color: rgba(7, 58, 7, 0.5);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(114, 245, 67, 0.2);
+}
+
+/* BOTÕES UNIFICADOS */
+button {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+    width: 100%;
+}
+
+button:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
+button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+/* Classes específicas de botões */
+.classEntrar {
+    background-color: #07ea0a;
+    color: #000;
+    border: none;
+    box-shadow: 0 4px 15px rgba(7, 234, 10, 0.4);
+}
+.classEntrar:hover { background-color: #0cf00a; transform: translateY(-2px); }
+
+.classRecuperar, .classRegistrar {
+    background-color: rgba(0, 16, 0, 0.8);
+    color: #07ea0a;
+    border: 1px solid #07ea0a;
+}
+.classRecuperar:hover, .classRegistrar:hover {
+    background-color: #07ea0a;
+    color: #000;
+}
+
+/* Mensagens de Erro */
+.error {
+    color: #ff4d4d;
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 5px;
+    text-align: left;
+}
+
+/* Footer */
+footer {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    text-align: center;
+    margin-top: auto;
+    padding: 15px;
+    color: #07ea0a;
+    background-color: rgba(2, 24, 1, 0.8);
+    border-top: 1px solid #07ea0a;
+    width: 100%;
+}
+2. index.css (Específico para Login)
+Aqui focamos apenas no formulário, para não poluir o arquivo global.
+
+form {
+    width: 100%;
+    max-width: 350px; /* Largura máxima para não esticar em telas grandes */
+    background-color: rgba(0, 20, 0, 0.7);
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.form-field {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #07ea0a;
+}
+
+input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(114, 245, 67, 0.3);
+    padding: 12px;
+    border-radius: 7px;
+    font-size: 16px;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: #07ea0a;
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 8px rgba(7, 234, 10, 0.5);
+}
+
+/* Espaçamento dos botões dentro do form */
+form div {
+    margin-bottom: 12px;
+}
+3. register.css (Específico para Registro)
+Como a página de registro usa a mesma estrutura de formulário que o login, podemos reaproveitar a maioria das regras. Criei este arquivo para ajustes finos e para manter a organização que você pediu.
+
+/* Importa a lógica do index para manter a identidade visual */
+@import url('index.css');
+
+#register-form {
+    max-width: 400px; /* Registro costuma ter campos maiores */
+}
+
+/* Estilo específico para a div de conteúdo no registro */
+#content {
+    max-width: 600px;
+}
+
+/* Ajuste para os botões lado a lado no registro */
+.button-group {
+    display: flex; 
+    gap: 10px; 
+    justify-content: center; 
+    margin-top: 20px;
+}
+
+/* No registro, os botões não ocupam 100% se estiverem em grupo */
+.button-group button {
+    width: auto;
+    flex: 1;
+}
+🚀 Principais Melhorias Implementadas:
+Fim da redundância: Você não precisa mais definir color e background para o botão .classEntrar em três arquivos diferentes. Defina no global.css e ele funcionará em todo o site.
+Glassmorphism: Usei backdrop-filter: blur() e cores com transparência (rgba). Isso dá aquele efeito de "vidro fosco" moderno que combina com o fundo de notas de dinheiro.
+Responsividade:
+Troquei width: 1535px (que causava barra de rolagem horizontal) por max-width e width: 100%.
+Usei clamp() no título para que ele diminua automaticamente em celulares.
+Experiência do Usuário (UX):
+Adicionei :hover e transition. Agora, quando o usuário passa o mouse no botão, ele reage suavemente.
+O input:focus agora brilha em verde, indicando onde o usuário está digitando.
+Organização:
+global.css $\rightarrow$ Estrutura, cores e componentes repetidos.
+index.css $\rightarrow$ Detalhes do formulário de Login.
+register.css $\rightarrow$ Detalhes específicos da página de Cadastro.
+Dica final: No seu HTML de Registro, para que os botões fiquem lado a lado como no seu código, adicione a classe button-group na div que envolve os botões: <div class="button-group"> ... </div>
+
+
+Impedindo usuários não logados de acessarem páginas. a partir do código home.html implemente o código auth-guard.js que está dentro do diretório PAGES. Seguem os códigos para a analise e implementação: 1º - home.html: <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOME DO CONTROLE DE GASTOS</title>
+<link rel="stylesheet" href="../../global.css">
+</head>
+<body>
+<h1 class="home">Bem-vindo ao Controle de Gastos</h1>
+<h2><p class="pBody01">Gerencie suas finanças de forma eficiente e fácil.</p></h2>
+<p class="pBody02">Acesse suas despesas, receitas e relatórios para manter o controle total sobre suas finanças.</p>
+<p class="pBody03">Explore as funcionalidades do nosso sistema e comece a organizar suas finanças hoje mesmo!</p>
+
+<button type="button" class="classRecuperar" onclick="logout()">Sair</button>
+
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+
+<script src="../../auth-guard.js"></script>
+<script src="home.js"></script>
+
+
+<script>
+const firebaseConfig = {
+apiKey: "AIzaSyCuJVEvq8QgeqONgQXF54-TVfQuAd8HsCQ",
+authDomain: "controle-de-gastos-1f442.firebaseapp.com",
+projectId: "controle-de-gastos-1f442",
+storageBucket: "controle-de-gastos-1f442.firebasestorage.app",
+messagingSenderId: "555510424243",
+appId: "1:555510424243:web:46af1abed54bd9646486c6"
+};
+firebase.initializeApp(firebaseConfig);
+
+firebase.auth().onAuthStateChanged(user => {
+if (!user) {
+window.location.href = "../../index.html";
+}
+});
+
+function logout() {
+firebase.auth().signOut().then(() => {
+window.location.href = "../../index.html";
+});
+}
+</script>
+
+<footer> <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESEVADOS * </p></footer>
+<!-- <div class="footerHome"></div> -->
+</body>
+</html>
+
+2° - auth-guard.js
+edit
+Impedindo usuários não logados de acessarem páginas. a partir do código home.html implemente o código auth-guard.js que está dentro do diretório PAGES. Seguem os códigos para a analise e implementação: 1º - home.html: <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOME DO CONTROLE DE GASTOS</title>
+<link rel="stylesheet" href="../../global.css">
+</head>
+<body>
+<h1 class="home">Bem-vindo ao Controle de Gastos</h1>
+<h2><p class="pBody01">Gerencie suas finanças de forma eficiente e fácil.</p></h2>
+<p class="pBody02">Acesse suas despesas, receitas e relatórios para manter o controle total sobre suas finanças.</p>
+<p class="pBody03">Explore as funcionalidades do nosso sistema e comece a organizar suas finanças hoje mesmo!</p>
+
+<button type="button" class="classRecuperar" onclick="logout()">Sair</button>
+
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+
+<script src="../../auth-guard.js"></script>
+<script src="home.js"></script>
+
+
+<script>
+const firebaseConfig = {
+apiKey: "AIzaSyCuJVEvq8QgeqONgQXF54-TVfQuAd8HsCQ",
+authDomain: "controle-de-gastos-1f442.firebaseapp.com",
+projectId: "controle-de-gastos-1f442",
+storageBucket: "controle-de-gastos-1f442.firebasestorage.app",
+messagingSenderId: "555510424243",
+appId: "1:555510424243:web:46af1abed54bd9646486c6"
+};
+firebase.initializeApp(firebaseConfig);
+
+firebase.auth().onAuthStateChanged(user => {
+if (!user) {
+window.location.href = "../../index.html";
+}
+});
+
+function logout() {
+firebase.auth().signOut().then(() => {
+window.location.href = "../../index.html";
+});
+}
+</script>
+
+<footer> <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESEVADOS * </p></footer>
+<!-- <div class="footerHome"></div> -->
+</body>
+</html>
+
+2° - auth-guard.js: firebase.auth().onAuthStateChanged(user => {
+if (user) {
+window.location.href = "../../home.html";
+}
+});
+
+
+edit
+Thought for 54.9 seconds
+
+Existe um erro crítico de lógica e de ordem de carregamento no seu código atual.
+
+O Problema: No seu home.html, você chama o arquivo auth-guard.js antes de configurar o Firebase (firebase.initializeApp). Isso fará com que o navegador tente verificar o usuário antes mesmo de saber qual é o seu projeto do Firebase, gerando um erro no console e não protegendo a página. Além disso, a lógica que estava no seu auth-guard.js causaria um loop infinito (ele mandaria para a home, a home chamaria o script, que mandaria para a home novamente).
+
+Aqui está a implementação correta e profissional:
+
+1. O arquivo auth-guard.js (Corrigido)
+Este arquivo deve ser genérico. A função dele é: "Se não houver usuário logado, mande-o para a página de login imediatamente".
+
+/**
+ * auth-guard.js
+ * Protege páginas privadas, redirecionando usuários não autenticados para o login.
+ */
+
+function checkAuth() {
+    firebase.auth().onAuthStateChanged((user) => {
+        if (!user) {
+            // Se NÃO houver usuário, redireciona para o login (index.html)
+            console.log("Acesso negado. Redirecionando para o login...");
+            window.location.href = "../../index.html"; 
+        } else {
+            console.log("Usuário autenticado. Acesso permitido.");
+        }
+    });
+}
+
+// Executa a verificação assim que o script for carregado
+checkAuth();
+2. O arquivo home.html (Revisado e Corrigido)
+Para que o Guard funcione, a configuração do Firebase deve vir primeiro. Eu reorganizei as tags <script> para você.
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOME DO CONTROLE DE GASTOS</title>
+    <link rel="stylesheet" href="../../global.css">
+</head>
+<body>
+    <h1 class="home">Bem-vindo ao Controle de Gastos</h1>
+    <h2><p class="pBody01">Gerencie suas finanças de forma eficiente e fácil.</p></h2>
+    <p class="pBody02">Acesse suas despesas, receitas e relatórios para manter o controle total sobre suas finanças.</p>
+    <p class="pBody03">Explore as funcionalidades do nosso sistema e comece a organizar suas finanças hoje mesmo!</p>
+    
+    <button type="button" class="classRecuperar" onclick="logout()">Sair</button>
+
+    <!-- 1º: SDKs do Firebase (Sempre primeiro) -->
+    <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+
+    <!-- 2º: Configuração e Inicialização do Firebase (Deve vir ANTES do Guard) -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCuJVEvq8QgeqONgQXF54-TVfQuAd8HsCQ",
+            authDomain: "controle-de-gastos-1f442.firebaseapp.com",
+            projectId: "controle-de-gastos-1f442",
+            storageBucket: "controle-de-gastos-1f442.firebasestorage.app",
+            messagingSenderId: "555510424243",
+            appId: "1:555510424243:web:46af1abed54bd9646486c6"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <!-- 3º: O Guard (Verifica se o usuário pode ver a página) -->
+    <script src="../../auth-guard.js"></script>
+
+    <!-- 4º: Lógicas específicas da página home -->
+    <script src="home.js"></script>
+    <script>
+        function logout() {
+            firebase.auth().signOut().then(() => {
+                alert("Saindo do sistema...");
+                window.location.href = "../../index.html";
+            }).catch((error) => {
+                console.error("Erro ao sair:", error);
+            });
+        }
+    </script>
+    
+    <footer> <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESEVADOS * </p></footer>
+</body>
+</html>
+💡 O que foi alterado e por que?
+Ordem de Execução (Pipeline):
+Errado: Guard $\rightarrow$ Configuração. (O Guard tentava usar o Firebase sem ele estar configurado).
+Certo: SDK $\rightarrow$ Configuração $\rightarrow$ Guard $\rightarrow$ Lógica da Página.
+Correção do Loop Infinito: No seu código original do auth-guard.js, você colocou if (user) { window.location.href = "../../home.html"; }.
+Isso significa: "Se o usuário estiver logado, mande-o para a home".
+Se você colocar isso dentro da home, ele entrará num loop eterno de redirecionamento.
+O Guard de páginas privadas deve ser: "Se NÃO houver usuário, mande para o login".
+Centralização da Lógica: Agora, qualquer página que você criar no futuro (ex: relatorios.html, perfil.html), basta adicionar a tag <script src="../../auth-guard.js"></script> após a configuração do Firebase, e a página estará automaticamente protegida.
+Melhoria no Logout: Adicionei um pequeno alert e um .catch para garantir que o usuário saiba que está saindo e para capturar erros caso a sessão já tenha expirado.
+
+Verifiquei que mesmo clicando em sair, e depois na seta de retornar à paginas anteriores continuo logado. Vou enviar os três arquivos .html para revisão e também todos os arquivos .js. 1º - index.html: <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOGIN DE CONTROLE DE GASTOS</title>
+<link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="global.css">
+</head>
+<body class="centralize">
+
+<form>
+<div class="form-field">
+<div><label for="nome">Nome:</label></div>
+<input type="text" id="nome" name="nome" placeholder="Digite seu nome">
+</div>
+<div class="form-field">
+<div><label for="email">E-mail:</label></div>
+<!-- Alterado para type="text" temporariamente para evitar que o navegador bloqueie o alerta customizado -->
+<input type="text" name="email" id="email" oninput="validateFields()" placeholder="Digite seu email">
+<div class="error" id="email-invalid-error" style="display:none">Email inválido</div>
+<div class="error" id="email-required-error" style="display:none">Email obrigatório</div>
+</div>
+<div class="form-field">
+<div><label for="password">Senha:</label></div>
+<input type="password" name="password" id="password" oninput="validateFields()" placeholder="Digite sua senha">
+<div class="error" id="password-required-error" style="display:none">Senha obrigatória</div>
+</div>
+
+<div>
+<button type="button" class="classRecuperar" id="recuperarSenha" onclick="recoverPassword()" disabled>Recuperar Senha</button>
+</div>
+<div>
+<button type="button" class="classEntrar" id="login-button" disabled onclick="login()">Entrar</button>
+</div>
+<div>
+<button type="button" class="classRegistrar" id="registrar" onclick="register()">Registrar</button>
+</div>
+</form>
+
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+apiKey: "AIzaSyCuJVEvq8QgeqONgQXF54-TVfQuAd8HsCQ",
+authDomain: "controle-de-gastos-1f442.firebaseapp.com",
+projectId: "controle-de-gastos-1f442",
+storageBucket: "controle-de-gastos-1f442.firebasestorage.app",
+messagingSenderId: "555510424243",
+appId: "1:555510424243:web:46af1abed54bd9646486c6"
+};
+firebase.initializeApp(firebaseConfig);
+</script>
+<script src="index.js"></script>
+<script src="validations.js"></script>
+<script src="loading.js"></script>
+<script src="register.js"></script>
+
+<footer> <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESEVADOS * </p></footer>
+</body>
+</html>
+2°-home.html ( por gentileza aproveite e ajuste o footer ): <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOME DO CONTROLE DE GASTOS</title>
+<link rel="stylesheet" href="../../global.css">
+</head>
+<body>
+<h1 class="home">Bem-vindo ao Controle de Gastos</h1>
+<h2><p class="pBody01">Gerencie suas finanças de forma eficiente e fácil.</p></h2>
+<p class="pBody02">Acesse suas despesas, receitas e relatórios para manter o controle total sobre suas finanças.</p>
+<p class="pBody03">Explore as funcionalidades do nosso sistema e comece a organizar suas finanças hoje mesmo!</p>
+
+<button type="button" class="classRecuperar" onclick="logout()">Sair</button>
+
+<!-- 1º: SDKs do Firebase (Sempre primeiro) -->
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+
+<!-- 2º: Configuração e Inicialização do Firebase (Deve vir ANTES do Guard) -->
+<script>
+const firebaseConfig = {
+apiKey: "AIzaSyCuJVEvq8QgeqONgQXF54-TVfQuAd8HsCQ",
+authDomain: "controle-de-gastos-1f442.firebaseapp.com",
+projectId: "controle-de-gastos-1f442",
+storageBucket: "controle-de-gastos-1f442.firebasestorage.app",
+messagingSenderId: "555510424243",
+appId: "1:555510424243:web:46af1abed54bd9646486c6"
+};
+firebase.initializeApp(firebaseConfig);
+</script>
+
+<!-- 3º: O Guard (Verifica se o usuário pode ver a página) -->
+<script src="../../auth-guard.js"></script>
+
+<!-- 4º: Lógicas específicas da página home -->
+<script src="home.js"></script>
+<script>
+function logout() {
+firebase.auth().signOut().then(() => {
+alert("Saindo do sistema...");
+window.location.href = "../../index.html";
+}).catch((error) => {
+console.error("Erro ao sair:", error);
+});
+}
+</script>
+
+<footer> <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESEVADOS * </p></footer>
+</body>
+</html>
+
+
+<!--
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOME DO CONTROLE DE GASTOS</title>
+<link rel="stylesheet" href="../../global.css">
+</head>
+<body>
+<h1 class="home">Bem-vindo ao Controle de Gastos</h1>
+<h2><p class="pBody01">Gerencie suas finanças de forma eficiente e fácil.</p></h2>
+<p class="pBody02">Acesse suas despesas, receitas e relatórios para manter o controle total sobre suas finanças.</p>
+<p class="pBody03">Explore as funcionalidades do nosso sistema e comece a organizar suas finanças hoje mesmo!</p>
+
+<button type="button" class="classRecuperar" onclick="logout()">Sair</button>
+
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+
+<script src="../../auth-guard.js"></script>
+<script src="home.js"></script>
+
+
+<script>
+const firebaseConfig = {
+apiKey: "AIzaSyCuJVEvq8QgeqONgQXF54-TVfQuAd8HsCQ",
+authDomain: "controle-de-gastos-1f442.firebaseapp.com",
+projectId: "controle-de-gastos-1f442",
+storageBucket: "controle-de-gastos-1f442.firebasestorage.app",
+messagingSenderId: "555510424243",
+appId: "1:555510424243:web:46af1abed54bd9646486c6"
+};
+firebase.initializeApp(firebaseConfig);
+
+firebase.auth().onAuthStateChanged(user => {
+if (!user) {
+window.location.href = "../../index.html";
+}
+});
+
+function logout() {
+firebase.auth().signOut().then(() => {
+window.location.href = "../../index.html";
+});
+}
+</script>
+
+<footer> <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESEVADOS * </p></footer>
+
+</body>
+</html>
+-->
+3°- register.html: <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REGISTRO DO CONTROLE DE GASTOS</title>
+<link rel="stylesheet" href="../../global.css">
+<link rel="stylesheet" href="../../index.css"> <!-- Adicionei para manter o estilo -->
+</head>
+<body class="centralize">
+<h1 class="home">Bem-vindo ao Registro do Controle de Gastos</h1>
+
+<div id="content" style="text-align: center; margin-bottom: 20px;">
+<p class="pBody03">Registre-se para ter acesso a todas as funcionalidades do nosso sistema comece a organizar suas finanças hoje mesmo!</p>
+<p class="pBody03">Preencha os dados abaixo para criar sua conta.</p>
+</div>
+
+<form id="register-form">
+<div class="form-field">
+<label for="reg-nome">Nome:</label>
+<input type="text" id="reg-nome" placeholder="Digite seu nome completo">
+</div>
+
+<div class="form-field">
+<label for="reg-email">E-mail:</label>
+<input type="email" id="reg-email" placeholder="Digite seu melhor e-mail" onchange="onChangeEmail()">
+</div>
+
+<div class="form-field">
+<label for="reg-password">Senha:</label>
+<input type="password" id="reg-password" placeholder="Crie uma senha">
+</div>
+
+<div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+<button type="button" class="classEntrar" onclick="handleRegister()">Criar Conta</button>
+<button type="button" class="classRecuperar" onclick="goBack()">Voltar</button>
+</div>
+</form>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+apiKey: "AIzaSyCuJVEvq8QgeqONgQXF54-TVfQuAd8HsCQ",
+authDomain: "controle-de-gastos-1f442.firebaseapp.com",
+projectId: "controle-de-gastos-1f442",
+storageBucket: "controle-de-gastos-1f442.firebasestorage.app",
+messagingSenderId: "555510424243",
+appId: "1:555510424243:web:46af1abed54bd9646486c6"
+};
+firebase.initializeApp(firebaseConfig);
+
+// Função para criar a conta
+function handleRegister() {
+const email = document.getElementById('reg-email').value;
+const password = document.getElementById('reg-password').value;
+const nome = document.getElementById('reg-nome').value;
+
+if (!nome || !email || !password) {
+alert("Por favor, preencha todos os campos!");
+return;
+}
+
+// Chama a função de criar usuário do Firebase
+firebase.auth().createUserWithEmailAndPassword(email, password)
+.then((userCredential) => {
+alert("Conta criada com sucesso! Bem-vindo, " + nome);
+window.location.href = "../../index.html"; // Volta para o login
+})
+.catch((error) => {
+console.error("Erro ao registrar:", error);
+alert("Erro ao criar conta: " + error.message);
+});
+}
+
+function goBack() {
+window.location.href = "../../index.html";
+}
+</script>
+
+<footer> <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESEVADOS * </p></footer>
+
+</body>
+</html> agora os .js: 1°- index.js: <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REGISTRO DO CONTROLE DE GASTOS</title>
+<link rel="stylesheet" href="../../global.css">
+<link rel="stylesheet" href="../../index.css"> <!-- Adicionei para manter o estilo -->
+</head>
+<body class="centralize">
+<h1 class="home">Bem-vindo ao Registro do Controle de Gastos</h1>
+
+<div id="content" style="text-align: center; margin-bottom: 20px;">
+<p class="pBody03">Registre-se para ter acesso a todas as funcionalidades do nosso sistema comece a organizar suas finanças hoje mesmo!</p>
+<p class="pBody03">Preencha os dados abaixo para criar sua conta.</p>
+</div>
+
+<form id="register-form">
+<div class="form-field">
+<label for="reg-nome">Nome:</label>
+<input type="text" id="reg-nome" placeholder="Digite seu nome completo">
+</div>
+
+<div class="form-field">
+<label for="reg-email">E-mail:</label>
+<input type="email" id="reg-email" placeholder="Digite seu melhor e-mail" onchange="onChangeEmail()">
+</div>
+
+<div class="form-field">
+<label for="reg-password">Senha:</label>
+<input type="password" id="reg-password" placeholder="Crie uma senha">
+</div>
+
+<div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+<button type="button" class="classEntrar" onclick="handleRegister()">Criar Conta</button>
+<button type="button" class="classRecuperar" onclick="goBack()">Voltar</button>
+</div>
+</form>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+apiKey: "AIzaSyCuJVEvq8QgeqONgQXF54-TVfQuAd8HsCQ",
+authDomain: "controle-de-gastos-1f442.firebaseapp.com",
+projectId: "controle-de-gastos-1f442",
+storageBucket: "controle-de-gastos-1f442.firebasestorage.app",
+messagingSenderId: "555510424243",
+appId: "1:555510424243:web:46af1abed54bd9646486c6"
+};
+firebase.initializeApp(firebaseConfig);
+
+// Função para criar a conta
+function handleRegister() {
+const email = document.getElementById('reg-email').value;
+const password = document.getElementById('reg-password').value;
+const nome = document.getElementById('reg-nome').value;
+
+if (!nome || !email || !password) {
+alert("Por favor, preencha todos os campos!");
+return;
+}
+
+// Chama a função de criar usuário do Firebase
+firebase.auth().createUserWithEmailAndPassword(email, password)
+.then((userCredential) => {
+alert("Conta criada com sucesso! Bem-vindo, " + nome);
+window.location.href = "../../index.html"; // Volta para o login
+})
+.catch((error) => {
+console.error("Erro ao registrar:", error);
+alert("Erro ao criar conta: " + error.message);
+});
+}
+
+function goBack() {
+window.location.href = "../../index.html";
+}
+</script>
+
+<footer> <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESEVADOS * </p></footer>
+
+</body>
+</html>
+2°-loading.js: function showloading(){
+const div = document.createElement("div");
+div.classList.add("loading", "centralize");
+
+const label = document.createElement("label");
+label.innerText = "Carregando...";
+
+div.appendChild(label);
+
+document.body.appendChild(div);
+
+//setTimeout(hideloading, 1500);
+
+//alert("Carregando...");
+}
+
+function hideloading(){
+const loadings = document.getElementsByClassName("loading");
+if (loadings.length){
+loadings[0].remove();
+}
+
+
+//alert("Pronto!");
+} 3°- function showloading(){
+const div = document.createElement("div");
+div.classList.add("loading", "centralize");
+
+const label = document.createElement("label");
+label.innerText = "Carregando...";
+
+div.appendChild(label);
+
+document.body.appendChild(div);
+
+//setTimeout(hideloading, 1500);
+
+//alert("Carregando...");
+}
+
+function hideloading(){
+const loadings = document.getElementsByClassName("loading");
+if (loadings.length){
+loadings[0].remove();
+}
+
+
+//alert("Pronto!");
+} 3°- validation.js:
+function validateEmail(email) {// Função para validar o formato do email usando uma expressão regular simples
+return /\S+@\S+\.\S+/.test(email);
+}
+
+4°- register.js: /**
+* register.js
+* Lógica de registro de usuários para o Sistema de Controle de Gastos
+*/
+
+// Função para validar ou processar mudanças no e-mail (chamada pelo onchange no HTML)
+function onChangeEmail() {
+const email = document.getElementById('reg-email').value;
+console.log("E-mail alterado para: " + email);
+// Aqui você poderia adicionar uma validação de formato de e-mail em tempo real
+}
+
+// Função principal para criar a conta
+async function handleRegister() {
+// Captura dos elementos do DOM
+const nomeInput = document.getElementById('reg-nome');
+const emailInput = document.getElementById('reg-email');
+const passwordInput = document.getElementById('reg-password');
+
+const nome = nomeInput.value.trim();
+const email = emailInput.value.trim();
+const password = passwordInput.value.trim();
+
+// 1. Validação básica de campos vazios
+if (!nome || !email || !password) {
+alert("Por favor, preencha todos os campos!");
+return;
+}
+
+// 2. Validação mínima de senha (ex: 6 caracteres, exigência do Firebase)
+if (password.length < 6) {
+alert("A senha deve ter pelo menos 6 caracteres.");
+return;
+}
+
+try {
+// 3. Criação do usuário no Firebase Authentication
+const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+
+// 4. Salvando o Nome do usuário no perfil do Firebase
+// O createUserWithEmailAndPassword não salva o nome, apenas email e senha.
+// Usamos o updateProfile para salvar o nome exibido.
+await userCredential.user.updateProfile({
+displayName: nome
+});
+
+alert(`Conta criada com sucesso! Bem-vindo(a), ${nome}`);
+
+// Redireciona para a página de login/index
+window.location.href = "../../index.html";
+
+} catch (error) {
+console.error("Erro ao registrar usuário:", error);
+
+// Tratamento de erros comuns do Firebase
+if (error.code === 'auth/email-already-in-use') {
+alert("Este e-mail já está sendo utilizado por outra conta.");
+} else if (error.code === 'auth/invalid-email') {
+alert("O e-mail digitado é inválido.");
+} else if (error.code === 'auth/weak-password') {
+alert("A senha escolhida é muito fraca.");
+} else {
+alert("Erro ao criar conta: " + error.message);
+}
+}
+}
+
+// Função para voltar à página anterior
+function goBack() {
+window.location.href = "../../index.html";
+}
+5°- auth-guard.js: /**
+* auth-guard.js
+* Protege páginas privadas, redirecionando usuários não autenticados para o login.
+*/
+
+function checkAuth() {
+firebase.auth().onAuthStateChanged((user) => {
+if (!user) {
+// Se NÃO houver usuário, redireciona para o login (index.html)
+console.log("Acesso negado. Redirecionando para o login...");
+window.location.href = "../../index.html";
+} else {
+console.log("Usuário autenticado. Acesso permitido.");
+}
+});
+}
+
+// Executa a verificação assim que o script for carregado
+checkAuth();
+
+edit
+Thought for 27.7 seconds
+
+O problema que você descreveu (conseguir voltar para a página Home após clicar em sair usando a seta do navegador) acontece por causa do Cache do Navegador.
+
+O navegador salva um "print" da página. Quando você clica em "Voltar", ele não executa o código do Firebase imediatamente, ele apenas mostra a imagem salva. Para resolver isso, precisamos de duas coisas: Desativar o cache da página e esconder o conteúdo da página até que o Firebase confirme que o usuário está logado.
+
+Além disso, notei que você enviou o conteúdo de register.html dentro do arquivo index.js. Vou corrigir isso e te entregar os arquivos organizados.
+
+1. auth-guard.js (Aprimorado)
+Para evitar que a página "pisque" o conteúdo antes de redirecionar, vamos adicionar uma lógica que esconde o corpo da página e só o mostra se o usuário for validado.
+
+/**
+ * auth-guard.js
+ * Protege páginas privadas e evita o efeito de "flash" de conteúdo não autorizado.
+ */
+
+function checkAuth() {
+    // Esconde o corpo da página imediatamente para evitar que o usuário 
+    // veja dados privados enquanto o Firebase verifica a sessão
+    document.body.style.display = 'none';
+
+    firebase.auth().onAuthStateChanged((user) => {
+        if (!user) {
+            console.log("Acesso negado. Redirecionando...");
+            window.location.replace("../../index.html"); // .replace não deixa a página no histórico
+        } else {
+            console.log("Usuário autenticado.");
+            document.body.style.display = 'flex'; // Mostra a página se estiver logado
+            
+            // Se a página for centralize, garante que o estilo de flex seja mantido
+            if(document.body.classList.contains('centralize')) {
+                document.body.style.display = 'flex';
+            } else {
+                document.body.style.display = 'block';
+            }
+        }
+    });
+}
+
+checkAuth();
+2. index.js (Implementação Real)
+Como o arquivo que você enviou estava com código HTML, eu implementei a lógica de login real para você, integrando com o seu validations.js e loading.js.
+
+/**
+ * index.js - Lógica de Autenticação de Login
+ */
+
+async function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    if (!email || !password) {
+        alert("Por favor, preencha todos os campos!");
+        return;
+    }
+
+    showloading(); // Ativa o loading do loading.js
+
+    try {
+        await firebase.auth().signInWithEmailAndPassword(email, password);
+        alert("Login realizado com sucesso!");
+        window.location.href = "home.html"; // Ajuste o caminho conforme sua pasta
+    } catch (error) {
+        console.error("Erro ao logar:", error);
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+            alert("E-mail ou senha incorretos.");
+        } else {
+            alert("Erro ao entrar: " + error.message);
+        }
+    } finally {
+        hideloading(); // Desativa o loading
+    }
+}
+
+function recoverPassword() {
+    const email = document.getElementById('email').value;
+    if (!email) {
+        alert("Digite seu e-mail para recuperar a senha.");
+        return;
+    }
+
+    firebase.auth().sendPasswordResetEmail(email)
+        .then(() => {
+            alert("E-mail de recuperação enviado!");
+        })
+        .catch((error) => {
+            alert("Erro ao enviar e-mail: " + error.message);
+        });
+}
+
+// Integração com o validations.js
+function validateFields() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const loginBtn = document.getElementById('login-button');
+    const recoverBtn = document.getElementById('recuperarSenha');
+
+    const isEmailValid = validateEmail(email); // Vem do validations.js
+
+    // Mostrar/Esconder erros de e-mail
+    document.getElementById('email-required-error').style.display = email ? 'none' : 'block';
+    document.getElementById('email-invalid-error').style.display = (email && !isEmailValid) ? 'block' : 'none';
+    document.getElementById('password-required-error').style.display = password ? 'none' : 'block';
+
+    // Habilita botões apenas se os campos básicos estiverem preenchidos
+    loginBtn.disabled = !(isEmailValid && password);
+    recoverBtn.disabled = !isEmailValid;
+}
+3. home.html (Revisado com Anti-Cache e Footer)
+Adicionei as tags de Cache-Control para impedir que a seta "Voltar" funcione após o logout e organizei a estrutura.
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- IMPEDE O CACHE DA PÁGINA (Resolve o problema da seta de voltar) -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <title>HOME DO CONTROLE DE GASTOS</title>
+    <link rel="stylesheet" href="../../global.css">
+</head>
+<body class="centralize"> <!-- Adicionado centralize para manter o estilo -->
+    
+    <h1 class="home">Bem-vindo ao Controle de Gastos</h1>
+    
+    <div style="text-align: center; max-width: 600px; margin-bottom: 30px;">
+        <p class="pBody01">Gerencie suas finanças de forma eficiente e fácil.</p>
+        <p class="pBody02">Acesse suas despesas, receitas e relatórios para manter o controle total sobre suas finanças.</p>
+        <p class="pBody03">Explore as funcionalidades do nosso sistema e comece a organizar suas finanças hoje mesmo!</p>
+    </div>
+    
+    <button type="button" class="classRecuperar" onclick="logout()">Sair do Sistema</button>
+
+    <!-- 1º: SDKs do Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+
+    <!-- 2º: Configuração do Firebase -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCuJVEvq8QgeqONgQXF54-TVfQuAd8HsCQ",
+            authDomain: "controle-de-gastos-1f442.firebaseapp.com",
+            projectId: "controle-de-gastos-1f442",
+            storageBucket: "controle-de-gastos-1f442.firebasestorage.app",
+            messagingSenderId: "555510424243",
+            appId: "1:555510424243:web:46af1abed54bd9646486c6"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <!-- 3º: Guard de Autenticação -->
+    <script src="../../auth-guard.js"></script>
+
+    <!-- 4º: Lógicas da Home -->
+    <script src="home.js"></script>
+    <script>
+        function logout() {
+            firebase.auth().signOut().then(() => {
+                alert("Sessão encerrada com sucesso!");
+                // Redireciona e limpa o histórico para evitar o "voltar"
+                window.location.replace("../../index.html");
+            }).catch((error) => {
+                console.error("Erro ao sair:", error);
+            });
+        }
+    </script>
+    
+    <footer> 
+        <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESERVADOS *</p>
+    </footer>
+</body>
+</html>
+🛠 Resumo das Correções:
+Problema da Seta Voltar: Resolvido com <meta http-equiv="Cache-Control" ...> no HTML e trocando window.location.href por window.location.replace(). O replace remove a página atual do histórico do navegador.
+Flash de Conteúdo: O auth-guard.js agora começa com document.body.style.display = 'none', fazendo com que a página fique invisível até que o Firebase confirme que você está logado.
+Index.js: Substituí o código HTML que estava no lugar do JS por funções reais de Login e Recuperação de Senha.
+Footer e Home: Ajustei a home.html para usar a classe centralize do seu global.css, garantindo que o botão de sair e os textos fiquem alinhados e o footer fixo na base.
+Sincronização: Agora a ordem de carregamento está correta: SDK $\rightarrow$ Config $\rightarrow$ Guard $\rightarrow$ Página.

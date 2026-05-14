@@ -5,15 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REGISTRO DO CONTROLE DE GASTOS</title>
     <link rel="stylesheet" href="../../global.css">
+    <link rel="stylesheet" href="../../index.css"> <!-- Adicionei para manter o estilo -->
 </head>
-<body>
+<body class="centralize">
     <h1 class="home">Bem-vindo ao Registro do Controle de Gastos</h1>
-    <div id="content" style="text-align: center;">
-        <p class="pBody03">Registre-se para ter acesso a todas as funcionalidades do nosso sistema e comece a organizar suas finanças hoje mesmo!</p>
-        <p class="pBody03">Preencha os dados nos campos a baixo para criar sua conta.</p>
-        
-        <button type="button" class="classRecuperar" onclick="logout()">Sair</button>
+    
+    <div id="content" style="text-align: center; margin-bottom: 20px;">
+        <p class="pBody03">Registre-se para ter acesso a todas as funcionalidades do nosso sistema comece a organizar suas finanças hoje mesmo!</p>
+        <p class="pBody03">Preencha os dados abaixo para criar sua conta.</p>
     </div>
+
+    <form id="register-form">
+        <div class="form-field">
+            <label for="reg-nome">Nome:</label>
+            <input type="text" id="reg-nome" placeholder="Digite seu nome completo">
+        </div>
+
+        <div class="form-field">
+            <label for="reg-email">E-mail:</label>
+            <input type="email" id="reg-email" placeholder="Digite seu melhor e-mail" onchange="onChangeEmail()">
+        </div>
+
+        <div class="form-field">
+            <label for="reg-password">Senha:</label>
+            <input type="password" id="reg-password" placeholder="Crie uma senha">
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+            <button type="button" class="classEntrar" onclick="handleRegister()">Criar Conta</button>
+            <button type="button" class="classRecuperar" onclick="goBack()">Voltar</button>
+        </div>
+    </form>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
@@ -29,19 +51,37 @@
         };
         firebase.initializeApp(firebaseConfig);
 
-        // Removido o redirecionamento automático para permitir que novos usuários 
-        // acessem esta página e criem suas contas.
-        firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                console.log("Usuário logado acessando registro:", user.email);
-            }
-        });
+        // Função para criar a conta
+        function handleRegister() {
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const nome = document.getElementById('reg-nome').value;
 
-        function logout() {
-            firebase.auth().signOut().then(() => {
-                window.location.href = "../../index.html";
-            });
+            if (!nome || !email || !password) {
+                alert("Por favor, preencha todos os campos!");
+                return;
+            }
+
+            // Chama a função de criar usuário do Firebase
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    alert("Conta criada com sucesso! Bem-vindo, " + nome);
+                    window.location.href = "../../index.html"; // Volta para o login
+                })
+                .catch((error) => {
+                    console.error("Erro ao registrar:", error);
+                    alert("Erro ao criar conta: " + error.message);
+                });
+        }
+
+        function goBack() {
+            window.location.href = "../../index.html";
         }
     </script>
+<script src="index.js"></script>
+    
+
+ <footer> <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESEVADOS * </p></footer>
+
 </body>
 </html>

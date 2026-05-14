@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="global.css">
 </head>
-<body class = "centralize">
+<body class="centralize">
+    
     <form>
         <div class="form-field">
             <div><label for="nome">Nome:</label></div>
@@ -15,7 +16,8 @@
         </div>
         <div class="form-field">
             <div><label for="email">E-mail:</label></div>
-            <input type="email" name="email" id="email" oninput="validateFields()" placeholder="Digite seu email">
+            <!-- Alterado para type="text" temporariamente para evitar que o navegador bloqueie o alerta customizado -->
+            <input type="text" name="email" id="email" oninput="validateFields()" placeholder="Digite seu email">
             <div class="error" id="email-invalid-error" style="display:none">Email inválido</div>
             <div class="error" id="email-required-error" style="display:none">Email obrigatório</div>
         </div>
@@ -24,8 +26,9 @@
             <input type="password" name="password" id="password" oninput="validateFields()" placeholder="Digite sua senha">
             <div class="error" id="password-required-error" style="display:none">Senha obrigatória</div>
         </div>
+                
         <div>
-            <button type="button" class="classRecuperar" id="recuperarSenha" disabled>Recuperar Senha</button>
+            <button type="button" class="classRecuperar" id="recuperarSenha" onclick="recoverPassword()" disabled>Recuperar Senha</button>            
         </div>
         <div>
             <button type="button" class="classEntrar" id="login-button" disabled onclick="login()">Entrar</button>
@@ -51,8 +54,8 @@
     <script src="index.js"></script>
     <script src="validations.js"></script>
     <script src="loading.js"></script>
+    <script src="register.js"></script>
+
+    <footer> <p>* SISTEMA PARA CONTROLE DE GASTOS - FLUIVERT 2026 - TODOS OS DIREITOS RESEVADOS * </p></footer>
 </body>
-<!--
-<div class = "loading centralize"><label> Carregando... </label></div>
--->
 </html>

@@ -1,107 +1,46 @@
-
-body {
-    background-color: #489448;
-    background-image: url("https://www.flavorpaper.com/cdn/shop/files/Money-Color-of-Money-Warhol-Wallpaper-B.jpg?v=1737935653&width=2000");
-    background-size: 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.centralize{
-    display: flex;
-    margin: 0; /* Remove a margem padrão do body */
-}
-
-input{
-    padding: 5px;
-    margin-bottom: 10px; /* Espaçamento entre os botões 
-    border-radius: 7px;
-    font-size: 15px;
-}
-
 form {
-    width: 300px; /* Define uma largura fixa para o formulário */
+    width: 100%;
+    max-width: 350px; /* Largura máxima para não esticar em telas grandes */
+    background-color: rgba(0, 20, 0, 0.7);
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
 }
+
+.form-field {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
 label {
     font-family: 'Courier New', Courier, monospace;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: bold;
-    margin-bottom: 50px; /* Espaçamento entre o label e o input */
-    color: rgb(97, 255, 91);
-    background-color: #011c0145;
-
+    margin-bottom: 8px;
+    color: #07ea0a;
 }
-input, button {
-    background-color: #073a035d;
-    padding: 5px;
-    margin-bottom: 10px; /* Espaçamento entre os botões */
+
+input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(114, 245, 67, 0.3);
+    padding: 12px;
     border-radius: 7px;
-    font-size: 20px;
-    width: -webkit-fill-available;  /* Faz o botão ocupar toda a largura disponível */
-    box-shadow:
-    0 5px 20px 0 rgb(114, 245, 67), inset 0 0 3px;
-    }
-
-    
-input{
-    /*border-radius: 7px; /* Bordas arredondadas para os campos de entrada */
-    margin-bottom: 7px; /* Espaçamento entre os botões */
-    backdrop-filter: blur(10);
-}
-button:active{
-    opacity: 0.9; /* Efeito de clique - botão fica um pouco transparente quando clicado */
-    color: #000000; /* Muda a cor do texto */
-}
-button{
-    cursor: pointer; /* Mãozinha - apenas para os botões*/
-    font-weight: bold; /* Deixa o texto dos botões em negrito */
-    box-shadow: 0 100px 5px 0 rgb(67, 245, 177), inset 1 0 20px;
-    position:relative;
-    overflow:hidden;
-    margin-bottom: 7px; /* Espaçamento entre os botões                          */
-    border-radius: 7px;/*
-    /*font-size: 15px;*/
-
-
-    
+    font-size: 16px;
+    color: #fff;
+    transition: all 0.3s ease;
 }
 
-form-field {
-    margin-bottom: 100px; /* Espaçamento entre os campos do formulário */
+input:focus {
+    outline: none;
+    border-color: #07ea0a;
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 8px rgba(7, 234, 10, 0.5);
 }
 
-button[disabled] {
-    opacity: 0.5; /* Deixa o botão mais transparente quando desabilitado */
-    /*cursor: not-allowed; /* Muda o cursor para indicar que o botão não pode ser clicado */
+/* Espaçamento dos botões dentro do form */
+form div {
+    margin-bottom: 12px;
 }
-.classEntrar{ /* Classe para o botão "Entrar" */
-    /*background: transparent;*/
-    border: 1px solid #fff;
-    cursor: pointer; /* Mãozinha */
-    color: rgb(120, 115, 115);
-}
-.classRecuperar{ /* Classe para o botão "Recuperar senha" */
-    background: transparent;
-    border: 1px solid #fff;
-    cursor: pointer; /* Mãozinha */
-    color: rgb(255, 255, 255);
-}
-.classRegistrar{ /* Classe para o botão "Registrar" */
-    background: transparent;
-    border: 1px solid #fff;
-    cursor: pointer; /* Mãozinha */
-    color: rgb(255, 255, 255);
-}
-.error {
-    color: rgb(255, 0, 0); /* Cor vermelha para mensagens de erro */
-    /*background:rgb(246, 3, 3);*/
-    font-size: 14px; /* Tamanho da fonte para mensagens de erro */
-    font-weight: bold; /* Mensagens de erro em negrito */
-    margin-top: 5px; /* Espaçamento acima da mensagem de erro */
-    display: none; /* Esconde as mensagens de erro por padrão */
-}
-

@@ -1,103 +1,89 @@
-const form = {
-    email: () => document.getElementById('email'),
-    emailInvalidError: () => document.getElementById('email-invalid-error'),
-    emailRequiredError: () => document.getElementById('email-required-error'),
-    password: () => document.getElementById('password'),
-    passwordRequiredError: () => document.getElementById('password-required-error'),
-    recuperarSenhaButton: () => document.getElementById('recuperarSenha'),
-    loginButton: () => document.getElementById('login-button'),
-    registrarButton: () => document.getElementById('registrar'),
+/**
+ * index.js - Lógica de Autenticação de Login
+ */
+
+async function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    if (!email || !password) {
+        alert("Por favor, preencha todos os campos!");
+        return;
+    }
+
+    showloading(); // Ativa o loading do loading.js
+
+    try {
+        await firebase.auth().signInWithEmailAndPassword(email, password);
+        alert("Login realizado com sucesso!");
+        //window.location.href = "home.html"; // Ajuste o caminho conforme sua pasta
+        //window.location.href = "pages/home";
+        window.location.href = "pages/home/home.html";
+
+
+
+    } catch (error) {
+        console.error("Erro ao logar:", error);
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+            alert("E-mail ou senha incorretos.");
+        } else {
+            alert("Erro ao entrar: " + error.message);
+        }
+    } finally {
+        hideloading(); // Desativa o loading
+    }
 }
 
-function validateFields() {
-    togglebuttonsDisabled();
-    toggleEmailErrors();
-    togglePasswordErrors();
-}
+function recoverPassword() {
+    const email = document.getElementById('email').value;
+    if (!email) {
+        alert("Digite seu e-mail para recuperar a senha.");
+        return;
+    }
 
-function isEmailValid() {
-    const email = form.email().value;
-    return !!email && validateEmail(email);
-}
-
-function login() {
-    // Define a persistência como SESSION (o login expira ao fechar a aba/navegador)
-    showloading();
-    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+    firebase.auth().sendPasswordResetEmail(email)
         .then(() => {
-            //hideloading();
-            // Tenta o login com as credenciais fornecidas
-            return firebase.auth().signInWithEmailAndPassword(form.email().value, form.password().value);
+            alert("E-mail de recuperação enviado!");
         })
-        .then(() => {
-            hideloading();
-            // Sucesso: Senha correta
-            window.location.href = "pages/home/home.html";
-        })
-        .catch(error => {
-            hideloading();
-            // CRÍTICO: Se a senha for inválida, forçamos o logout de qualquer sessão anterior
-            firebase.auth().signOut();
-            alert("Senha ou e-mail inválidos.");
-            console.error('Erro de autenticação:', error);
+        .catch((error) => {
+            alert("Erro ao enviar e-mail: " + error.message);
         });
 }
-    
+
+// Integração com o validations.js
+function validateFields() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const loginBtn = document.getElementById('login-button');
+    const recoverBtn = document.getElementById('recuperarSenha');
+
+    const isEmailValid = validateEmail(email); // Vem do validations.js
+
+    // Mostrar/Esconder erros de e-mail
+    document.getElementById('email-required-error').style.display = email ? 'none' : 'block';
+    document.getElementById('email-invalid-error').style.display = (email && !isEmailValid) ? 'block' : 'none';
+    document.getElementById('password-required-error').style.display = password ? 'none' : 'block';
+
+    // Habilita botões apenas se os campos básicos estiverem preenchidos
+    loginBtn.disabled = !(isEmailValid && password);
+    recoverBtn.disabled = !isEmailValid;
+}
+/**
+ * Função para redirecionar o usuário da página de Login 
+ * para a página de Registro
+ */
 function register() {
-    // Se o register.html é uma página protegida, não faz sentido ir para lá sem login.
-    // Se for uma página de "Criar Conta", remova a proteção de Auth de dentro do register.html.
-
-    //showloading();
-
-    window.location.href = "pages/register/register.html";
-}
-
-function toggleEmailErrors() {
-    const email = form.email().value;
-    const emailRequiredError = form.emailRequiredError();
-    const emailInvalidError = form.emailInvalidError();
-
-    emailRequiredError.style.display = email ? "none" : "block";
-    emailInvalidError.style.display = validateEmail(email) || !email ? "none" : "block";
-}
-
-function togglePasswordErrors() {
-    const password = form.password().value;
-    const passwordRequiredError = form.passwordRequiredError();
-    passwordRequiredError.style.display = password ? "none" : "block";
-}
-
-function togglebuttonsDisabled() {
-    const emailValid = isEmailValid();
-    const passwordValid = isPasswordValid();
+    // Aqui usamos o mesmo conceito do caminho da home.
+    // Se a sua home está em pages/home/home.html, 
+    // provavelmente o registro está em pages/register/register.html
     
-    form.recuperarSenhaButton().disabled = !emailValid;
-    form.loginButton().disabled = !emailValid || !passwordValid;
-    // Se o registro for uma página pública para CRIAR conta, deixe false.
-    // Se for uma página interna, use: form.registrarButton().disabled = !emailValid || !passwordValid;
+    window.location.href = "pages/register/register.html"; 
+}
+function logout() {
+    firebase.auth().signOut().then(() => {
+        alert("Sessão encerrada com sucesso!");
+        window.location.replace("../../index.html"); 
+    });
 }
 
-function isPasswordValid() {
-    const password = form.password().value;
-    return !!password;
-}
 
-function validateEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-    // A expressão regular /\S+@\S+\.\S+/ verifica se o email contém pelo menos um caractere antes do símbolo "@",
-    // seguido por pelo menos um caractere, um ponto e pelo menos um caractere após o ponto.
-
-
-
-
-
-
-
-
-
-
-
-
-    
