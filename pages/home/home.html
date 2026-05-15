@@ -13,13 +13,18 @@
     <link rel="stylesheet" href="../../global.css">
 </head>
 <body class="centralize">
+    <!-- CABEÇALHO PROFISSIONAL -->
+    <header class="main-header">
+        <h1 class="home-title">Controle de Gastos</h1>
+        <button type="button" class="btn-sair" onclick="logout()">Sair</button>
+    </header>
 
-    <h1 class="home">Bem-vindo ao Controle de Gastos</h1>
+
     
     <div style="text-align: center; max-width: 700px; margin-bottom: 30px; padding: 0 20px;">
-        <p class="pBody01">Gerencie suas finanças de forma eficiente e fácil.</p>
-        <p class="pBody02">Acesse suas despesas, receitas e relatórios para manter o controle total sobre suas finanças.</p>
-        <p class="pBody03">Explore as funcionalidades do nosso sistema e comece a organizar suas finanças hoje mesmo!</p>
+        <p class="pBodyHome1">Gerencie suas finanças.</p>
+        <p class="pBodyHome2">Acesse suas despesas, receitas e relatórios.</p>
+        <p class="pBodyHome3">Explore as funcionalidades do nosso sistema e organize suas finanças hoje mesmo!</p>
     </div>
     
 <!-- SEÇÃO DE TRANSAÇÕES -->
@@ -61,6 +66,7 @@
                     <option value="Outros">Outros</option>
                 </select>
             </div>
+
         </div>
 
         <button type="button" class="classEntrar" onclick="saveTransaction()">Salvar Lançamento</button>
@@ -77,8 +83,9 @@
 </div>
 
 
-    <!-- Botão de Sair -->
+    <!-- Botão de Sair 
     <button type="button" class="classRecuperar" onclick="logout()" style="width: auto; padding: 10px 40px;">Sair do Sistema</button>
+    -->
 
     <!-- 1º: SDKs do Firebase -->
     <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>

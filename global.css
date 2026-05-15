@@ -17,6 +17,72 @@ body {
     min-height: 100vh;
 }
 
+/* --- HEADER RESPONSIVO --- */
+.main-header {
+    display: flex;
+    justify-content: space-between; /* Título de um lado, Botão do outro */
+    align-items: center;
+    width: 100%;
+    max-width: 1000px; /* Limita a largura em telas grandes */
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: rgba(0, 20, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    border: 1px solid rgba(114, 245, 67, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilo do Título dentro do Header */
+.home-title {
+    color: #07ea0a;
+    font-size: clamp(18px, 4vw, 28px); /* Tamanho da fonte se adapta ao celular */
+    font-weight: bold;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(7, 234, 10, 0.5);
+}
+
+/* Botão de Sair Compacto e Elegante */
+.btn-sair {
+    background: rgba(0, 0, 0, 0.5);
+    color: #ff4d4d; /* Vermelho para indicar saída */
+    border: 1px solid #ff4d4d;
+    padding: 6px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    width: auto !important; /* Impede que o botão estique */
+}
+
+.btn-sair:hover {
+    background: #ff4d4d;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(255, 77, 77, 0.4);
+}
+
+/* AJUSTE PARA CELULAR (Telas menores que 600px) */
+@media (max-width: 600px) {
+    .main-header {
+        padding: 15px;
+        margin: 10px;
+    }
+    
+    .home-title {
+        font-size: 16px; /* Diminui o título no celular para não quebrar linha */
+    }
+    
+    .btn-sair {
+        padding: 5px 10px;
+        font-size: 11px;
+    }
+}
+
+
+
 /* Centralização Universal */
 .centralize {
     display: flex;
@@ -27,11 +93,12 @@ body {
     padding: 10px;
     gap: 20px;
     margin: 0px;
+    
 }
 
 /* Título Principal (Estilo Neon Glass) */
 .home {
-    font-size: 15px;
+    font-size: 35px;
     font-weight: bold;
     text-align: center;
     color: #07ea0a;
@@ -51,7 +118,7 @@ p {
     padding: 0;
 }
 
-.pBody01, .pBody02, .pBody03 {
+.pBody03 {
     text-align: center;
     margin: 5px 0;
     padding: 0px;
@@ -62,6 +129,86 @@ p {
     backdrop-filter: blur(5px);
     border: 1px solid rgba(114, 245, 67, 0.2);
 }
+
+.pBodyHome1{
+    width: auto !important; /* Remove a largura de 100% para não esticar */
+    position:fixed;
+    top: 15%;
+    left: 0%;
+    right: 0%;
+    transform: translateY(-50%);
+
+    text-align: center;
+    margin: 5px 0;
+    padding: 0px;
+    border-radius: 7px;
+    font-size: 15px; 
+    color: #07ea0a; 
+    background-color: rgba(7, 58, 7, 0.5);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(114, 245, 67, 0.2);
+    font-size: 15px;
+    /*font-weight: bold;*/
+    text-align: center;
+
+    max-width: 37.5%;
+    margin: 10px auto;
+    width: auto !important; /* Remove a largura de 100% para não esticar */
+}
+
+.pBodyHome2{
+    width: auto !important; /* Remove a largura de 100% para não esticar */
+    position:fixed;
+    top: 19%;
+    left: 0%;
+    right: 0%;
+    transform: translateY(-50%);
+
+    text-align: center;
+    margin: 5px 0;
+    padding: 0px;
+    border-radius: 7px;
+    font-size: 15px; 
+    color: #07ea0a; 
+    background-color: rgba(7, 58, 7, 0.5);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(114, 245, 67, 0.2);
+    font-size: 15px;
+    /*font-weight: bold;*/
+    text-align: center;
+
+    max-width: 37.5%;
+    margin: 10px auto;
+    width: auto !important; /* Remove a largura de 100% para não esticar */
+}
+
+.pBodyHome3{
+    width: auto !important; /* Remove a largura de 100% para não esticar */
+    position:fixed;
+    top: 23%;
+    left: 0%;
+    right: 0%;
+    transform: translateY(-50%);
+
+    text-align: center;
+    margin: 5px 0;
+    padding: 0px;
+    border-radius: 7px;
+    font-size: 15px; 
+    color: #07ea0a; 
+    background-color: rgba(7, 58, 7, 0.5);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(114, 245, 67, 0.2);
+    font-size: 15px;
+    /*font-weight: bold;*/
+    text-align: center;
+
+    max-width: 37.5%;
+    margin: 10px auto;
+    width: auto !important; /* Remove a largura de 100% para não esticar */
+
+}
+
 /*
 .pBody01 { font-size: 18px; font-weight: bold; color: #e0e0e0; }
 .pBody02 { font-size: 15px; color: #ccc; }
@@ -153,14 +300,25 @@ footer {
     border-radius: 20px;
     border: 1px solid rgba(114, 245, 67, 0.3);
     box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-    width: 100%;
-    max-width: 600px;
+    /*width: 100%;*/
+    /*max-width: 650px;*/
+
+    width: auto !important; /* Remove a largura de 100% para não esticar */
+    position:fixed;
+    top: 47%;
+    left: 0%;
+    right: 0%;
+    transform: translateY(-50%);
+
+    max-width: 37.5%;
+    margin: 10px auto;
+    width: auto !important; /* Remove a largura de 100% para não esticar */
 }
 
 .form-card h2 {
     color: #07ea0a;
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 5px;
     font-size: 24px;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -169,14 +327,14 @@ footer {
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr; /* Divide em duas colunas */
-    gap: 20px;
+    gap: 15px;
     margin-bottom: 25px;
 }
 
 /* Ajuste para telas pequenas (celular) */
 @media (max-width: 600px) {
     .form-grid {
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr;
     }
 }
 
