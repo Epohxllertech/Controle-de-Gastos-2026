@@ -59,9 +59,9 @@ body {
 }
 
 .btn-sair:hover {
-    background: #ff4d4d;
-    color: #fff;
-    box-shadow: 0 0 15px rgba(255, 77, 77, 0.4);
+    background: #fe020225;
+    color: #ff0000;
+    box-shadow: 0 0 5px rgb(255, 1, 1);
 }
 
 /* AJUSTE PARA CELULAR (Telas menores que 600px) */
@@ -132,7 +132,7 @@ p {
 
 .pBodyHome1{
     width: auto !important; /* Remove a largura de 100% para não esticar */
-    position:fixed;
+    /*position:fixed;*/
     top: 15%;
     left: 0%;
     right: 0%;
@@ -151,14 +151,14 @@ p {
     /*font-weight: bold;*/
     text-align: center;
 
-    max-width: 37.5%;
+    max-width: 100%;
     margin: 10px auto;
     width: auto !important; /* Remove a largura de 100% para não esticar */
 }
 
 .pBodyHome2{
     width: auto !important; /* Remove a largura de 100% para não esticar */
-    position:fixed;
+    /*position:fixed;*/
     top: 19%;
     left: 0%;
     right: 0%;
@@ -177,14 +177,14 @@ p {
     /*font-weight: bold;*/
     text-align: center;
 
-    max-width: 37.5%;
+    max-width: 100%;
     margin: 10px auto;
     width: auto !important; /* Remove a largura de 100% para não esticar */
 }
 
 .pBodyHome3{
     width: auto !important; /* Remove a largura de 100% para não esticar */
-    position:fixed;
+    /*position:fixed;*/
     top: 23%;
     left: 0%;
     right: 0%;
@@ -203,7 +203,7 @@ p {
     /*font-weight: bold;*/
     text-align: center;
 
-    max-width: 37.5%;
+    max-width: 100%;
     margin: 10px auto;
     width: auto !important; /* Remove a largura de 100% para não esticar */
 
@@ -273,11 +273,15 @@ button[disabled] {
 
 /* Footer */
 footer {
+    position:fixed;
     font-family: Arial, sans-serif;
     font-size: 13px;
     text-align: center;
     margin-top: auto;
-    padding: 20px;
+    padding: 10px;
+    bottom: 0;
+    width: 100%;
+
     color: #07ea0a;
     background-color: rgba(2, 24, 1, 0.8);
     border-top: 1px solid #07ea0a;
@@ -296,7 +300,7 @@ footer {
 .form-card {
     background-color: rgba(0, 20, 0, 0.7);
     backdrop-filter: blur(15px);
-    padding: 30px;
+    padding: 25px;
     border-radius: 20px;
     border: 1px solid rgba(114, 245, 67, 0.3);
     box-shadow: 0 15px 35px rgba(0,0,0,0.5);
@@ -305,9 +309,9 @@ footer {
 
     width: auto !important; /* Remove a largura de 100% para não esticar */
     position:fixed;
-    top: 47%;
+    top: 35%;
     left: 0%;
-    right: 0%;
+    right: 70%;
     transform: translateY(-50%);
 
     max-width: 37.5%;
@@ -369,9 +373,16 @@ footer {
 }
 
 .list-container h3 {
+    background-color: rgba(0, 20, 0, 0.7);
+    backdrop-filter: blur(15px);
     color: #07ea0a;
     text-align: center;
     margin-bottom: 20px;
+    
+   
+   
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 /* Estilo de cada item da lista que será criado via JS */
@@ -398,4 +409,66 @@ footer {
 .text-red {
     color: #ff4d4d !important;
 }
+
+/* --- ESTILOS DO DASHBOARD --- */
+.dashboard-container {
+/*top:10%;*/
+    margin: 0 auto;
+    padding: 30px;
+    
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 colunas iguais */
+    gap: 5px;
+    width: 42%;
+    max-width: 900px;
+    margin-bottom: 10px;
+}
+
+.summary-card {
+    background: rgba(0, 20, 0, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 10px;
+    border-radius:15px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+/*
+    max-width: 200%;
+    margin: 100px auto;
+    width: auto !important; /* Remove a largura de 100% para não esticar */
+}
+
+.summary-card:hover {
+    transform: translateY(-5px);
+}
+
+.summary-card span {
+    display: block;
+    font-size: 14px;
+    color: #ccc;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.summary-card h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+
+}
+
+/* Cores específicas para cada cartão */
+.card-green { border-top: 4px solid #07ea0a; color: #07ea0a; }
+.card-red { border-top: 4px solid #ff4d4d; color: #ff4d4d; }
+.card-blue { border-top: 4px solid #00d4ff; color: #00d4ff; }
+
+/* Ajuste para celular */
+@media (max-width: 600px) {
+    .dashboard-container {
+        grid-template-columns: 1fr; /* No celular, os cartões ficam um abaixo do outro */
+    }
+}
+
 

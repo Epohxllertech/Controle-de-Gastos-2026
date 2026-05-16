@@ -3,13 +3,20 @@
  * Lógica de transações financeiras com Firebase Firestore
  */
 
-// Inicializa a escuta de dados assim que a página carrega
-document.addEventListener('DOMContentLoaded', () => {
-    loadTransactions();
+// EM VEZ DE DOMCONTENTLOADED, USAMOS O OBSERVAR DE ESTADO DE AUTENTICAÇÃO
+firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+        console.log("Sessão confirmada! Carregando transações...");
+        loadTransactions(); // Só chama a função quando o usuário for confirmado
+    } else {
+        console.log("Nenhum usuário detectado. O auth-guard deve redirecionar.");
+    }
 });
 
 // Função para salvar a transação no Firestore
 async function saveTransaction() {
+    // ... (mantenha o resto da função saveTransaction exatamente como está)
+
     // 1. Captura dos elementos do formulário
     const descInput = document.getElementById('trans-desc');
     const valorInput = document.getElementById('trans-valor');
@@ -63,28 +70,58 @@ async function saveTransaction() {
     }
 }
 
-// Função para carregar e listar as transações em tempo real
 function loadTransactions() {
     const user = firebase.auth().currentUser;
     const listContainer = document.getElementById('transactions-list');
+    
+    const elReceitas = document.getElementById('total-receitas');
+    const elDespesas = document.getElementById('total-despesas');
+    const elSaldo = document.getElementById('saldo-final');
 
-    if (!user) return;
+    if (!user) {
+        console.log("ERRO: Nenhum usuário logado encontrado.");
+        return;
+    }
 
-    // O 'onSnapshot' atualiza a tela automaticamente toda vez que o banco muda
+    console.log("Buscando transações para o usuário: " + user.uid);
+
     firebase.firestore().collection('transacoes')
-        .where('userId', '==', user.uid) // Filtra: Só mostra transações do usuário logado
-        .orderBy('data', 'desc') // Mostra as mais recentes primeiro
+        .where('userId', '==', user.uid)
+        .orderBy('data', 'desc')
         .onSnapshot((snapshot) => {
-            listContainer.innerHTML = ""; // Limpa a lista atual
+            console.log("O Firebase respondeu! Quantidade de documentos encontrados: " + snapshot.size);
+            
+            listContainer.innerHTML = "";
+            let totalR = 0;
+            let totalD = 0;
+
+            if (snapshot.empty) {
+                console.log("Atenção: A consulta retornou zero resultados.");
+                listContainer.innerHTML = `<p style="text-align:center; color:#ccc;">Nenhum lançamento encontrado.</p>`;
+                return;
+            }
+            
+            // ... resto do código (o forEach e as somas) ...
+
 
             if (snapshot.empty) {
                 listContainer.innerHTML = `<p style="text-align:center; color:#ccc;">Nenhum lançamento encontrado.</p>`;
+                elReceitas.innerText = "R$ 0,00";
+                elDespesas.innerText = "R$ 0,00";
+                elSaldo.innerText = "R$ 0,00";
                 return;
             }
 
             snapshot.forEach((doc) => {
                 const trans = doc.data();
-                const id = doc.id; 
+                const id = doc.id;
+
+                // --- LÓGICA DE SOMA ---
+                if (trans.tipo === 'receita') {
+                    totalR += trans.valor;
+                } else if (trans.tipo === 'despesa') {
+                    totalD += trans.valor;
+                }
 
                 const colorClass = trans.tipo === 'receita' ? 'text-green' : 'text-red';
                 const symbol = trans.tipo === 'receita' ? '+' : '-';
@@ -105,14 +142,21 @@ function loadTransactions() {
                 `;
                 listContainer.innerHTML += itemHTML;
             });
+
+            // --- ATUALIZAÇÃO DOS CARTÕES DO DASHBOARD ---
+            const saldoFinal = totalR - totalD;
+            
+            elReceitas.innerText = `R$ ${totalR.toFixed(2)}`;
+            elDespesas.innerText = `R$ ${totalD.toFixed(2)}`;
+            elSaldo.innerText = `R$ ${saldoFinal.toFixed(2)}`;
+            
+            // Muda a cor do saldo para vermelho se estiver negativo
+            elSaldo.style.color = saldoFinal >= 0 ? "#00d4ff" : "#ff4d4d";
         }, (error) => {
             console.error("Erro ao carregar transações:", error);
-            // Se der erro aqui, provavelmente é a falta do ÍNDICE no console do Firebase
-            if(error.message.includes("index")) {
-                alert("Erro de índice do banco de dados. Verifique o Console (F12) e clique no link azul para criar o índice.");
-            }
         });
 }
+
 
 // Função para excluir uma transação
 async function deleteTransaction(id) {
