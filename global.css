@@ -300,7 +300,7 @@ footer {
 .form-card {
     background-color: rgba(0, 20, 0, 0.7);
     backdrop-filter: blur(15px);
-    padding: 25px;
+    padding: 20px;
     border-radius: 20px;
     border: 1px solid rgba(114, 245, 67, 0.3);
     box-shadow: 0 15px 35px rgba(0,0,0,0.5);
@@ -310,7 +310,7 @@ footer {
     width: auto !important; /* Remove a largura de 100% para não esticar */
     position:fixed;
     top: 35%;
-    left: 0%;
+    left: 1%;
     right: 70%;
     transform: translateY(-50%);
 
@@ -377,10 +377,7 @@ footer {
     backdrop-filter: blur(15px);
     color: #07ea0a;
     text-align: center;
-    margin-bottom: 20px;
-    
-   
-   
+    margin-bottom: 20px;    
     text-transform: uppercase;
     letter-spacing: 2px;
 }
